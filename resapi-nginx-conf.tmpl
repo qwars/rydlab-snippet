@@ -1,0 +1,16 @@
+server {
+	listen 9091;
+	listen [::]:9091;
+
+            # access_log {{ dirname }}restapi.access.log;
+            # error_log {{ dirname }}restapi.error.log;
+
+            root {{ dirname }};
+
+            index index.html;
+            
+            location  / {
+                      try_files $uri $uri/ =404;
+           }
+   
+}
