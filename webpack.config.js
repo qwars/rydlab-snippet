@@ -18,35 +18,35 @@ module.exports = {
     context: __dirname + '/develop/application-web',
     plugins: [
         new MiniCssExtractPlugin({
-            filename: "styleshets/styles.css"
+            filename: "styleshets/application.css"
         }),
         new OptimizeCssAssetsPlugin({
             assetNameRegExp: /\.css$/g,
-            cssProcessor: require('cssnano')({preset: ['default']}),
-            cssProcessorOptions: {
-                discardComments: {removeAll: true}
-            }
+            cssProcessorPluginOptions: {
+                preset: ['default', { discardComments: { removeAll: true } }],
+            },
+            canPrint: true            
         }),
 	new CopyWebpackPlugin([
-            {
-	        cache: true,
-	        from: './index.html',
-	        to: './index.html'
-	    },
-	    // {
-	    //     cache: true,
-	    //     from: './languages/*.json',
-	    //     to: './languages/[name].[ext]'
-	    // },
-	    // {
-	    //     cache: true,
-	    //     from: './images/*',
-	    //     to: './images/[name].[ext]'
-	    // }
+	    {
+		cache: true,
+		from: './favicon.ico',
+		to: './favicon.ico'
+	    }
 	],{ copyUnmodified: true })
     ],    
     module: {
 	rules: [
+            {
+                test: /images.+\.(jpe?g|png|gif|svg|ico)$/i,
+                use: [{
+                    loader: 'file-loader',
+                    options: {
+                        name: '[name].[ext]',
+                        useRelativePath: true
+                    }
+                }]
+            },
             {
 	        test: /\.css$/,
                 use: [                    

@@ -2,15 +2,15 @@ server {
 	listen 9091;
 	listen [::]:9091;
 
-            # access_log {{ dirname }}restapi.access.log;
-            # error_log {{ dirname }}restapi.error.log;
+        root {{ dirname }};
 
-            root {{ dirname }};
-
-            index index.html;
-            
-            location  / {
-                      try_files $uri $uri/ =404;
-           }
-   
+        location / {
+           index index.pl index.html
+           try_files $uri =404;
+           gzip off;
+           fastcgi_pass  127.0.0.1:8999;
+           fastcgi_index index.pl;
+           fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+           include fastcgi_params;
+     }
 }
