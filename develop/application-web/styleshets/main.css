@@ -1,4 +1,24 @@
-body {
+html {
+    min-height: 100%;
     margin: 0px;
     padding: 0px;
+    height: 100%;
+}
+body {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr auto;
+    min-height: 100%;
+    margin: 0px;
+    padding: 0px;
+    height: 100%;
+    font: normal normal 400 normal 14px / normal Montserrat-Regular, Montserrat;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    color: rgb(64, 64, 64);
+    background-color: rgb(27, 34, 67);
+}
+*:focus {
+    box-shadow: none;
+    outline: 0px solid transparent;
 }
