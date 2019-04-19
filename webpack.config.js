@@ -28,6 +28,11 @@ module.exports = {
             canPrint: true            
         }),
 	new CopyWebpackPlugin([
+            {
+	        cache: true,
+	        from: './index.html',
+	        to: './index.html'
+	    },
 	    {
 		cache: true,
 		from: './favicon.ico',
@@ -91,7 +96,7 @@ module.exports = {
     },
     entry: "./javascripts/index.imba",
     output: {
-	path: __dirname + "/publick",
+	path: __dirname + "/public",
 	filename: "javascripts/application.js"
     }
 }
