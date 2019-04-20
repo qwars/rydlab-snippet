@@ -32,7 +32,9 @@ header label + span {
     display: flex;
     align-items: center;
     padding: 0px 16px;
-    width: 50%
+    width: 26vw;
+    min-width: 132px;
+    white-space: nowrap;
 }
 
 header label + span > a {
@@ -43,3 +45,6 @@ header label + span > a.active {
     color: rgb(0, 179, 255);
     font-weight: 600
 }
+
+header > aside { padding: 0px 16px; }
+header > aside a i { font-size: 32px }

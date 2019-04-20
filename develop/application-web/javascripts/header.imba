@@ -13,5 +13,5 @@ export tag Header < header
 					<input type="text" placeholder="Поиск ... ">
 				<span>
 					<a .active=!window:location:hash href="/"> "Все фрагменты"
-					<a .active=window:location:hash href="#Code"> "Новый фрагмент"
 			<aside>
+				<a .active=window:location:hash href="#Code" title="Новый фрагмент" > <i.fas.fa-plus-square>
