@@ -1,3 +1,27 @@
 main {
-    box-sizing: border-box
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    padding: 16px
+}
+
+main > section, main > article { width: 980px }
+
+main > article { display: flex; flex-direction: column; }
+
+main > article > form { background-color: white; border-radius: 4px; flex-grow: 1; margin-top: 16px; padding: 24px; display: flex; flex-direction: column; }
+
+main > article > form > section { flex-grow: 1; border: 1px solid rgb(242,242,242); margin: 16px 0px; padding: 0px 16px; display: flex; flex-direction: column; }
+main > article > form > section > section { flex-grow: 1; min-height: 300px }
+main > article > form > section > div {
+    display: flex; align-items: center; justify-content: space-between; margin: 16px 0px
+}
+
+main > article > form > section > div s { width: 16px }
+main > article > form > section > div label { flex-grow: 1; }
+
+main > article > form > div {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    grid-template-rows: 48px
 }
