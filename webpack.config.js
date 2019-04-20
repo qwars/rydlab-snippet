@@ -5,6 +5,11 @@ const autoprefixer = require('autoprefixer');
 
 module.exports = {
     devServer: {
+        historyApiFallback: {
+            rewrites: [
+                { from: /.*/, to: '/index.html' }
+            ]
+        },
         before: function(app){
             const nginx = process.argv.includes('--nginx') && require('nginx-plugin')({
                 sudo:true, id: 'restapi',

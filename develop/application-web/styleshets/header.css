@@ -41,7 +41,7 @@ header label + span > a {
     padding: 0px 8px
 }
 
-header label + span > a.active {
+header label + span > a.view {
     color: rgb(0, 179, 255);
     font-weight: 600
 }
