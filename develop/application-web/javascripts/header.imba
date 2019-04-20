@@ -1,5 +1,5 @@
-
 import 'imba-router'
+import State from './controller.imba'
 
 export tag Header < header
 	def render

@@ -1,5 +1,5 @@
-
 import 'imba-router'
+import State from './controller.imba'
 
 tag CodeEditor < article
 	def setup
@@ -16,6 +16,7 @@ tag CodeEditor < article
 				<section>
 					<div>
 						<label> <input type="text" placeholder="Название файла" >
+						<i.far.fa-trash-alt>
 						<s>
 						<details>
 							<summary> "Выбрать язык кода"
@@ -30,6 +31,7 @@ tag CodeEditor < article
 				<section>
 					<div>
 						<label> <input type="text" placeholder="Название файла" >
+						<i.far.fa-trash-alt>
 						<s>
 						<details>
 							<summary> "Выбрать язык кода"
@@ -66,6 +68,16 @@ tag ListCode < section
 			<h2>
 				<i.fas.fa-code>
 				<span> "Все фрагменты"
+			if State.counter isa Number && !State.counter then <section> <dl>
+				<dt> <i.fas.fa-info-circle>
+				<dd> "Данных для просмотра пока еще нет."
+			else if !State.counter then <section>
+				<i.fas.fa-spinner>
+				<i.fas.fa-spinner>
+				<i.fas.fa-spinner>
+			else
+				<ul .loading=State.waiting >
+
 			<Pagination>
 
 

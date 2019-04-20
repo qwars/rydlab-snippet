@@ -19,9 +19,53 @@ main > article > form > section > div {
 
 main > article > form > section > div s { width: 16px }
 main > article > form > section > div label { flex-grow: 1; }
+main > article > form > section > div label + i {
+    color: rgb(204,204,204);
+    width: 48px;
+    height: 48px;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    font-size: 17px;
+    cursor: pointer;
+}
+main > article > form > section > div label + i:hover {
+    color: rgb(255, 49, 52)
+}
 
 main > article > form > div {
     display: grid;
     grid-template-columns: auto 1fr auto;
     grid-template-rows: 48px
 }
+
+
+main > section { display: flex; flex-direction: column; position: relative; }
+main > section > section { position: absolute; top: 0px; right: 0px; bottom: 0px; left: 0px; margin: auto; display: flex; align-items: center; justify-content: center; }
+main > section > section > dl {
+    background-color: white; border-radius: 4px;
+    padding: 16px; display: flex; align-items: center;
+}
+main > section > section > dl i { color: rgb(4,201,255); }
+main > section > section > dl dd { margin-left: 16px; }
+
+
+main > section > section .fa-spinner {
+    animation: rotate 2.5s linear infinite;
+    color: rgb( 242, 242, 242 );
+    font-size: 48px;
+}
+main > section > section .fa-spinner + .fa-spinner {
+    animation: rotate 1.5s linear infinite reverse;
+    color: rgb( 204, 204, 204 );
+    margin-left: -24px;
+    margin-top: -24px;
+}
+main > section > section .fa-spinner + .fa-spinner + .fa-spinner {
+    animation: rotate 1.3s linear infinite;
+    color: rgb( 172, 172, 172 );
+    margin-left: -48px;
+    margin-top: 24px;
+}
+
+@keyframes rotate { to { transform: rotate(360deg); } }
