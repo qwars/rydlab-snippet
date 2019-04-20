@@ -1,0 +1,85 @@
+html {
+    min-height: 100%;
+    margin: 0px;
+    padding: 0px;
+    height: 100%;
+}
+
+body {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr auto;
+    min-height: 100%;
+    margin: 0px;
+    padding: 0px;
+    height: 100%;
+    font: normal normal 400 normal 14px / normal Montserrat-Regular, Montserrat;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    color: rgb(64, 64, 64);
+    background-color: rgb(27, 34, 67);
+}
+
+*:focus {
+    box-shadow: none;
+    outline: 0px solid transparent;
+}
+
+dfn, u, caption, a, del, i, var, samp, code, s, ins {
+    font: normal normal 400 normal 14px / normal Montserrat-Regular, Montserrat;
+    text-decoration: none;
+}
+
+a, del {
+    color: rgb(4,201,255);
+    text-decoration: none;
+    cursor: pointer;
+}
+
+a:hover { color: rgb(129, 143, 205); }
+
+
+input {
+    height: 48px;
+    border-radius: 4px;
+    background-color: rgb(237, 249, 255);
+    border: 2px solid transparent;
+    width: 100%;
+    padding: 0px 16px;
+    box-sizing: border-box;
+    font: normal normal 500 normal 14px / normal Montserrat-Medium, Montserrat;
+    appearance: none;
+    color: rgb(64, 64, 64);
+    appearance: none;
+    transition: color .3s, border-color .3s;
+}
+
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button {
+    appearance: none;
+    margin: 0;
+}
+input::-webkit-input-placeholder {
+    color: rgb(162, 200, 216);
+}              
+input::-moz-input-placeholder {
+    color: rgb(162, 200, 216);
+}
+input::-ms-input-placeholder {
+    color: rgb(162, 200, 216);
+}
+input::input-placeholder {
+    color: rgb(162, 200, 216);
+}
+input:-webkit-input-placeholder {
+    color: rgb(162, 200, 216);
+}
+input:-moz-input-placeholder {
+    color: rgb(162, 200, 216);
+}
+input:-ms-input-placeholder {
+    color: rgb(162, 200, 216);
+}
+input:input-placeholder {
+    color: rgb(162, 200, 216);
+}

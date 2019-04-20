@@ -1,0 +1,45 @@
+header {
+    box-sizing: border-box;
+    display: grid;
+    grid-template-rows: 72px;
+    grid-template-columns: auto 1fr auto;
+    grid-column-gap: 16px;
+    background-color: rgb(40, 49, 90)
+}
+
+header > * {
+    align-self: stretch;
+    display: flex;
+    align-items: center;
+}
+
+header > a { justify-content: center; width: 132px }
+header > a i { font-size: 24px; margin: 0px .3ex }
+header > a i:first-child { font-weight: bold; font-size: 42px; color: white; margin: 0px .1ex; }
+header > a i:first-child ~ i { transform: translateY(12px) }
+header > a i:last-child { font-size: 16px; margin: -48px 0px 0px -32px }
+
+header label { flex-grow: 1; }
+header label > input {
+    flex-grow: 1;
+    height: 40px;
+    color: rgba(129,143,205,.345);
+    padding: 0 14px;
+    background-color: rgb(27, 34, 67);
+}
+
+header label + span {
+    display: flex;
+    align-items: center;
+    padding: 0px 16px;
+    width: 50%
+}
+
+header label + span > a {
+    padding: 0px 8px
+}
+
+header label + span > a.active {
+    color: rgb(0, 179, 255);
+    font-weight: 600
+}

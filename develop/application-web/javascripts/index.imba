@@ -1,8 +1,5 @@
 import style from './styleshets.imba'
-
-tag Header < header
-    def render
-        <self>
+import Header from './header.imba'
 
 tag Main < main
     def render
