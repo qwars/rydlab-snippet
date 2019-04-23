@@ -11,13 +11,15 @@ module.exports = {
             ]
         },
         before: function(app){
-            const nginx = process.argv.includes('--nginx') && require('nginx-plugin')({
-                sudo:true, id: 'restapi',
-                template:{ path: 'resapi-nginx-conf.tmpl', dirname: __dirname + '/develop/application-restapi/' }
-            });
-            nginx && nginx.startVhost.then(
-                result=> console.log('\n[\x1b[5m\x1b[36mWARN\x1b[0m]', 'rest API is working\n')
-                    || ['SIGINT', 'SIGTERM','extt'].forEach((sig) =>process.on(sig,()=>nginx.killVhost(nginx.confVhost,nginx.pid,nginx.sudo))))
+            if( process.argv.includes('--server') ) {
+                const command = require('child_process');
+                const morbo = 'morbo -m production -w '
+                      + __dirname + '/develop/application-restapi/index.pl '
+                      + __dirname + '/develop/application-restapi/index.pl '
+                command.exec( morbo, function(error,stdout,stderr){
+                    console.log('\n[\x1b[5m\x1b[36mWARN\x1b[0m]', 'rest API is working\n')
+                })
+            }
         }
     },
     context: __dirname + '/develop/application-web',

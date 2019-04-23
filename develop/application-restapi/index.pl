@@ -10,23 +10,48 @@ use strict;
 use Mojolicious::Lite;
 use Mojo::IOLoop;
 
+my $count = 0;
+
+sub getCountSnippers {
+    $count < 40 ? $count++ : $count
+}
+
+sub getPageSnippers {
+    my ( $self, $page, $count ) = @_;
+    $self->send({ json => ['a', 'b'] })
+        
+}
+
+sub getSnipper {
+    my ( $self, $id ) = @_;
+    $self->send( { json => { 'id' => $id } } )
+}
+
 sub timerSend {
-    my ($self, $message) = @_;
-  Mojo::IOLoop->timer(10 => sub {
-    my $loop = shift;
-    $self->send("echo: $message" . time );
-    timerSend( $self, $message )
-  });
+    my $self = shift;
+    Mojo::IOLoop->timer(
+        5 => sub {
+            my $loop = shift;
+            $self->send( getCountSnippers() );
+            timerSend( $self )
+        }
+    );
 }
 
 websocket '/' => sub {
     my $self = shift;
-    $self->on(message => sub {
-        my ($self, $message) = @_;
-        $self->send("echo: $message" . time );
-        timerSend($self, $message)
+    $self->on(
+        message => sub {
+            my ($self, $message) = @_;
+            if ( $message eq 'start' ) {
+                $self->send( getCountSnippers() );
+                timerSend( $self )
+            }
+            elsif ( $message =~ /get[:]\s(\d+)/ ) { getSnipper( $self, $1 ) }
+            elsif ( $message =~ /list[:]\s(\d+)\s*(\d+)*/ ) { getPageSnippers( $self, $1, $2 ) }
     });
 };
+
 
 app->start;
 
