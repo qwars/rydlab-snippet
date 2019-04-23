@@ -1,5 +1,5 @@
 
-const URI = 'http://localhost:9091'
+const URI = 'ws://localhost:3000'
 
 class Application
 	prop waiting default: true
@@ -12,10 +12,12 @@ class Application
 				.then do |response| response.text.then do |resource| resolve resource
 
 	def initialize
-		# @waiting = clearTimeout( @waiting ) || setTimeout( &, 166 ) do getDataServer.then do |response|
-		# 	@waiting = !console.log response
-		# 	@counter = 10
-		# 	Imba.commit
 		@counter = 10
+
+		let socket = WebSocket.new URI
+		socket:onmessage = do|e| console.log e
+		socket:onopen = do
+			console.log "Connection opened"
+			socket.send "Yees"
 
 exports.State = Application.new

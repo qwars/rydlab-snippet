@@ -6,6 +6,31 @@
 
 use warnings;
 use strict;
+
+use Mojolicious::Lite;
+use Mojo::IOLoop;
+
+sub timerSend {
+    my ($self, $message) = @_;
+  Mojo::IOLoop->timer(10 => sub {
+    my $loop = shift;
+    $self->send("echo: $message" . time );
+    timerSend( $self, $message )
+  });
+}
+
+websocket '/' => sub {
+    my $self = shift;
+    $self->on(message => sub {
+        my ($self, $message) = @_;
+        $self->send("echo: $message" . time );
+        timerSend($self, $message)
+    });
+};
+
+app->start;
+
+=head_p
 use CGI;
 
 print foreach (
@@ -27,6 +52,8 @@ print "\nEnvironment Variables:\n=================\n";
 foreach my $k ( sort keys %ENV ) {
     print "$k [$ENV{$k}]\n";
 }
+
+=cut
 
 __END__
 
