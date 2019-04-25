@@ -31,6 +31,7 @@
     "webpack-dev-server": "^3.3.1"
   },
   "dependencies": {
+    "codemirror": "^5.46.0",
     "imba": "^1.4.2",
     "imba-router": "^0.2.0"
   }

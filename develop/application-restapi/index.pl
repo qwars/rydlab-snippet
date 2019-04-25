@@ -9,12 +9,18 @@ use strict;
 
 use Mojolicious::Lite;
 use Mojo::IOLoop;
+use Mojo::Pg;
+use Mojo::JSON qw(decode_json encode_json);
+
+use Data::Dumper;
 
 my $count = 0;
 
-sub getCountSnippers {
-    $count < 40 ? $count++ : $count
-}
+`sudo -u postgres psql -c 'CREATE TABLE IF NOT EXISTS snippers ( id serial primary key, body json );'`;
+
+my $pg = Mojo::Pg->new('postgresql://postgres@/postgres');
+
+my $db = $pg->db->listen('insert');
 
 sub getPageSnippers {
     my ( $self, $page, $count ) = @_;
@@ -24,19 +30,25 @@ sub getPageSnippers {
 
 sub getSnipper {
     my ( $self, $id ) = @_;
-    $self->send( { json => { 'id' => $id } } )
+    # $db->insert('snippers', { title=>'First', body => $body }) && $db->notify('insert');
 }
 
-sub timerSend {
-    my $self = shift;
-    Mojo::IOLoop->timer(
-        5 => sub {
-            my $loop = shift;
-            $self->send( getCountSnippers() );
-            timerSend( $self )
-        }
-    );
+sub setSnipper {
+    my ( $self, $json ) = @_;
+    print Dumper $json
+    # $db->insert('snippers', { body => $body }) && $db->notify('insert');
 }
+
+# sub timerSend {
+#     my $self = shift;
+#     Mojo::IOLoop->timer(
+#         5 => sub {
+#             my $loop = shift;
+#             $self->send( getCountSnippers() );
+#             timerSend( $self )
+#         }
+#     );
+# }
 
 websocket '/' => sub {
     my $self = shift;
@@ -44,9 +56,14 @@ websocket '/' => sub {
         message => sub {
             my ($self, $message) = @_;
             if ( $message eq 'start' ) {
-                $self->send( getCountSnippers() );
-                timerSend( $self )
+                $self->send( $db->query('select count(id) from snippers')->hash->{count} );
+                $db->on(
+                    notification => sub {                        
+                        $self->send( $db->query('select count(id) from snippers')->hash->{count} )
+                    }
+                );
             }
+            elsif ( $message =~ /set[:]\s(.+)/ ) { setSnipper( $self, $1 ) }
             elsif ( $message =~ /get[:]\s(\d+)/ ) { getSnipper( $self, $1 ) }
             elsif ( $message =~ /list[:]\s(\d+)\s*(\d+)*/ ) { getPageSnippers( $self, $1, $2 ) }
     });
@@ -54,31 +71,6 @@ websocket '/' => sub {
 
 
 app->start;
-
-=head_p
-use CGI;
-
-print foreach (
-    "Content-Type: text/plain\n\n",
-    "BW Test version 5.0\n",
-    "Copyright 1995-2008 The BearHeart Group, LLC\n\n",
-    "Versions:\n=================\n",
-    "perl: $]\n",
-    "CGI: $CGI::VERSION\n"
-);
-
-my $q = CGI::Vars();
-print "\nCGI Values:\n=================\n";
-foreach my $k ( sort keys %$q ) {
-    print "$k [$q->{$k}]\n";
-}
-
-print "\nEnvironment Variables:\n=================\n";
-foreach my $k ( sort keys %ENV ) {
-    print "$k [$ENV{$k}]\n";
-}
-
-=cut
 
 __END__
 

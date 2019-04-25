@@ -27,10 +27,14 @@ class Application
 		else
 			@socket.send "list: { page } { @limit }"
 
+	def createSnipper dataset
+		console.log dataset
+
 	def initialize
 		@socket:onmessage = do|e|
 			let dataset = JSON.parse e:data
 			if dataset isa Number && counter = dataset then Imba.commit
+			else if dataset isa Number then Imba.commit @waiting = undefined
 			else if @current = dataset then Imba.commit
 
 		@socket:onopen = do socket.send "start"

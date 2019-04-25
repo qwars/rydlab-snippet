@@ -1,50 +1,64 @@
 import 'imba-router'
 import State from './controller.imba'
 
-tag CodeEditor < article
-	def setup
-		dom:ownerDocument:body.addEventListener 'click', do |e|
-			if let el = dom.querySelector('details[open]') then el.removeAttribute 'open'
+const CodeMirror = require 'codemirror'
+
+tag FormEditor < form
+	prop item
+	prop index
+
+	def mount
+		console.log 'mount', querySelector( 'section > section' ).dom
+		@cm = CodeMirror querySelector( 'section > section' ).dom, {
+			lineNumbers: true,
+			mode: "perl"
+			}
 
 	def render
 		<self>
+			<section>
+				<div>
+					<label> <input@filename type="text" placeholder="Название файла" >
+					<i.far.fa-trash-alt :click.deleteSnipperCode( @index )>
+					<s>
+					<details>
+						<summary> "Выбрать язык кода"
+						<ul>
+							<li> "Auto"
+							<li> "Perl"
+							<li> "JavaScript"
+							<li> "Java"
+							<li> "CSS"
+							<li> "HTML"
+				<section>
+
+
+tag CodeEditors < article
+	prop snipper
+
+	def setup
+		dom:ownerDocument:body.addEventListener 'click', do |e|
+			if let el = dom.querySelector('details[open]') then el.removeAttribute 'open'
+	def mount
+		@snipper = [{}]
+
+	def createSnipperCode
+		@snipper.push {}
+
+	def deleteSnipperCode index
+		if index && index isa Number then @snipper.splice index, 1
+
+	def render
+		<self .{ 'snippers-' + Number !!@snipper && @snipper:length }>
 			<h2>
 				<i.fas.fa-laptop-code>
 				<span> "Новый кусок кода"
-			<form>
-				<label> <input type="text" placeholder="Описание" >
-				<section>
-					<div>
-						<label> <input type="text" placeholder="Название файла" >
-						<i.far.fa-trash-alt>
-						<s>
-						<details>
-							<summary> "Выбрать язык кода"
-							<ul>
-								<li> "Auto"
-								<li> "Perl"
-								<li> "JavaScript"
-								<li> "Java"
-								<li> "CSS"
-								<li> "HTML"
-					<section>
-				<section>
-					<div>
-						<label> <input type="text" placeholder="Название файла" >
-						<i.far.fa-trash-alt>
-						<s>
-						<details>
-							<summary> "Выбрать язык кода"
-							<ul>
-								<li> "Auto"
-								<li> "Perl"
-								<li> "JavaScript"
-								<li> "Java"
-								<li> "CSS"
-								<li> "HTML"
-					<section>
+			<section>
+				<label> <input@description type="text" placeholder="Описание" >
+				for item, index in @snipper
+					<FormEditor item=item index=index>
 				<div>
-					<button.active> "Добавить"
+					<button.active :click.createSnipperCode > "Добавить"
 					<s>
 					<button> "Сохранить"
 
@@ -84,6 +98,6 @@ tag ListCode < section
 export tag Main < main
 	def render
 		<self>
-			<CodeEditor route="/code">
+			<CodeEditors route="/code">
 			<CodeViewer route="/view/:id">
 			<ListCode route="/">

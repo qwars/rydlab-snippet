@@ -9,17 +9,22 @@ main > section, main > article { width: 980px }
 
 main > article { display: flex; flex-direction: column; }
 
-main > article > form { background-color: white; border-radius: 4px; flex-grow: 1; margin-top: 16px; padding: 24px; display: flex; flex-direction: column; }
+main > article > section { background-color: white; border-radius: 4px; flex-grow: 1; margin-top: 16px; padding: 24px; display: flex; flex-direction: column; }
 
-main > article > form > section { flex-grow: 1; border: 1px solid rgb(242,242,242); margin: 16px 0px; padding: 0px 16px; display: flex; flex-direction: column; }
-main > article > form > section > section { flex-grow: 1; min-height: 300px }
-main > article > form > section > div {
+main > article.snippers-1 > section > label:first-child + form .far.fa-trash-alt { display: none !important }
+
+main > article form { flex-grow: 1; display: flex; flex-direction: column; }
+
+main > article form > section { flex-grow: 1; border: 1px solid rgb(242,242,242); margin: 16px 0px; padding: 0px 16px; display: flex; flex-direction: column; }
+main > article form > section > section { flex-grow: 1; min-height: 300px;  }
+main > article form > section > section > .CodeMirror { height: 100% !important; }
+main > article form > section > div {
     display: flex; align-items: center; justify-content: space-between; margin: 16px 0px
 }
 
-main > article > form > section > div s { width: 16px }
-main > article > form > section > div label { flex-grow: 1; }
-main > article > form > section > div label + i {
+main > article form > section > div s { width: 16px }
+main > article form > section > div label { flex-grow: 1; }
+main > article form > section > div label + i {
     color: rgb(204,204,204);
     width: 48px;
     height: 48px;
@@ -29,11 +34,11 @@ main > article > form > section > div label + i {
     font-size: 17px;
     cursor: pointer;
 }
-main > article > form > section > div label + i:hover {
+main > article form > section > div label + i:hover {
     color: rgb(255, 49, 52)
 }
 
-main > article > form > div {
+main > article form + div {
     display: grid;
     grid-template-columns: auto 1fr auto;
     grid-template-rows: 48px
