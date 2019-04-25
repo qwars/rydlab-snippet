@@ -23,6 +23,7 @@ main > article form > section > div {
 }
 
 main > article form > section > div s { width: 16px }
+main > article form > section > div details { min-width: 190px }
 main > article form > section > div label { flex-grow: 1; }
 main > article form > section > div label + i {
     color: rgb(204,204,204);

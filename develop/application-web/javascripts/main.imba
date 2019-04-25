@@ -3,38 +3,46 @@ import State from './controller.imba'
 
 const CodeMirror = require 'codemirror'
 
+console.dir CodeMirror:models
+
 tag FormEditor < form
 	prop item
 	prop index
 
 	def mount
-		console.log 'mount', querySelector( 'section > section' ).dom
 		@cm = CodeMirror querySelector( 'section > section' ).dom, {
 			lineNumbers: true,
-			mode: "perl"
+			mode: "text"
 			}
+		@cm.on "change", do |edoc| @item:body = edoc.getValue
+
+	def changeSnipperFile
+		@item:filename = @filename.value
+
+	def changeSnipperCode code
+		if  @item:code = code:name || '' then @cm.setOption "mode", code:mode || 'text'
 
 	def render
 		<self>
 			<section>
 				<div>
-					<label> <input@filename type="text" placeholder="Название файла" >
+					<label> <input@filename type="text" placeholder="Название файла" :input.changeSnipperFile >
 					<i.far.fa-trash-alt :click.deleteSnipperCode( @index )>
 					<s>
 					<details>
-						<summary> "Выбрать язык кода"
+						<summary> @item:code ? @item:code : "Выбрать язык кода"
 						<ul>
-							<li> "Auto"
-							<li> "Perl"
-							<li> "JavaScript"
-							<li> "Java"
-							<li> "CSS"
-							<li> "HTML"
+							<li :click.changeSnipperCode( {} ) > "Auto"
+							<li :click.changeSnipperCode( { name: "Perl", mode: 'perl' } )> "Perl"
+							<li :click.changeSnipperCode( { name: "JavaScript", mode: "javascript" } )> "JavaScript"
+							<li :click.changeSnipperCode( { name: "Java", mode: "clike" } )> "Java"
+							<li :click.changeSnipperCode( { name: "CSS", mode: "css" } )> "CSS"
+							<li :click.changeSnipperCode( { name: "HTML", mode: "htmlmixed" } )> "HTML"
 				<section>
 
 
 tag CodeEditors < article
-	prop snipper
+	prop snipper default: []
 
 	def setup
 		dom:ownerDocument:body.addEventListener 'click', do |e|
@@ -48,6 +56,9 @@ tag CodeEditors < article
 	def deleteSnipperCode index
 		if index && index isa Number then @snipper.splice index, 1
 
+	def countSnippers
+		@snipper:length && @snipper.filter( do |item| !!item:body ):length
+
 	def render
 		<self .{ 'snippers-' + Number !!@snipper && @snipper:length }>
 			<h2>
@@ -60,7 +71,7 @@ tag CodeEditors < article
 				<div>
 					<button.active :click.createSnipperCode > "Добавить"
 					<s>
-					<button> "Сохранить"
+					<button .active=!!countSnippers> "Сохранить"
 
 
 tag CodeViewer < article
