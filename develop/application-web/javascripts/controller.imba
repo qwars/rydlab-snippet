@@ -27,6 +27,12 @@ class Application
 		else
 			@socket.send "list: { page } { @limit }"
 
+	def getMimeType value
+		Promise.new do |resolve, reject|
+			window.fetch( URI.replace( 'ws', 'http' ), { method: 'post', body: value } )
+				.catch( do |error| reject error )
+				.then do |resource| resource.json do |response| resolve response
+
 	def createSnipper dataset
 		console.log dataset
 

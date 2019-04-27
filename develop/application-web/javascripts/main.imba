@@ -20,8 +20,9 @@ tag FormEditor < form
 			mode: "text"
 			}
 		@cm.on "change", do |edoc| @timeout = clearTimeout( @timeout ) || setTimeout( &, 300 ) do
-			@item:body = edoc.getValue
-			Imba.commit
+			State.getMimeType( @item:body = edoc.getValue ).then do |response|
+				console.log response
+				Imba.commit
 
 	def changeSnipperName
 		@item:filename = @filename.value
@@ -31,10 +32,13 @@ tag FormEditor < form
 
 	def createSnipperHref
 		@timeout = clearTimeout( @timeout ) || setTimeout( &, 300 ) do
-			console.log @href.dom:validity:valid
+			@href.dom:validity:valid && window.fetch( @href.value, { mode: 'cors' } ).then do |response|
+				response.text.then do|text| @cm.setValue @item:body = "{ @item:body || '' }\n{ text }"
 
-	def createSnipperFile
-		console.log 'file'
+	def createSnipperFile e
+		let reader = FileReader.new
+		reader:onload = do|file| @cm.setValue @item:body = "{ @item:body || '' }\n{ file:target:result }"
+		Array.from e.target.dom:files, do |item| reader.readAsText item
 
 	def render
 		<self>
@@ -45,8 +49,8 @@ tag FormEditor < form
 						<input@href type="url" placeholder="Загрузить по ссылке" :input.createSnipperHref>
 						<i.fas.fa-link>
 					<label title="Загрузить файлом">
-						<input@file type="file">
-						<i.fas.fa-download :click.createSnipperFile>
+						<input@file type="file" accept=".js,.json,.pl,.pm,.css,.html" :change.createSnipperFile>
+						<i.fas.fa-download>
 					<i.far.fa-trash-alt :click.deleteSnipperCode( @index )>
 					<s>
 					<details>

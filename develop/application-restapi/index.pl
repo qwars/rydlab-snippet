@@ -50,6 +50,10 @@ sub setSnipper {
 #     );
 # }
 
+post '/' => sub {
+    
+}
+
 websocket '/' => sub {
     my $self = shift;
     $self->on(
