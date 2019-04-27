@@ -15,9 +15,11 @@ tag FormEditor < form
 	prop index
 
 	def mount
+		querySelector( 'section > section' ).dom:textContent = ''
 		@cm = CodeMirror querySelector( 'section > section' ).dom, {
 			lineNumbers: true,
-			mode: "text"
+			mode: "text",
+			value: @item:body || ''
 			}
 		@cm.on "change", do |edoc| @timeout = clearTimeout( @timeout ) || setTimeout( &, 300 ) do
 			State.getMimeType( @item:body = edoc.getValue ).then do |response|
@@ -80,6 +82,9 @@ tag CodeEditors < article
 	def deleteSnipperCode index
 		if index && index isa Number then @snipper.splice index, 1
 
+	def saveSnippers
+		!!countSnippers && State.createSnipper { body: @snipper, description: @description.value  }
+
 	def countSnippers
 		!!@description.value && @snipper:length && @snipper.filter( do |item| !!item:body && !!item:filename && !!item:code ):length
 
@@ -95,15 +100,35 @@ tag CodeEditors < article
 				<div>
 					<button.active :click.createSnipperCode> "Добавить"
 					<s>
-					<button .active=!!countSnippers> "Сохранить"
+					<button .active=!!countSnippers :click.saveSnippers > "Сохранить"
 
+tag CodeMirrorViwer
+	prop value
+	prop mode
+	prop strings
+
+	def mount
+		dom:textContent = ''
+		@cm = CodeMirror dom, { readOnly: true, lineNumbers: true, value: @value, mode: @mode || 'text' }
+
+	def render
+		<self>
 
 tag CodeViewer < article
+
 	def render
 		<self>
 			<h2>
 				<i.fas.fa-file-code>
-				<span> "Название"
+				<span> State.current ? State.current:description : "Фрагменты кода загружаются"
+			if !State.current then <div>
+				<i.fas.fa-spinner>
+				<i.fas.fa-spinner>
+				<i.fas.fa-spinner>
+			else
+				<dl> for item, index in State.current:body
+					<dt> item:filename
+					<dd> <CodeMirrorViwer value=item:body mode=item:model >
 
 tag Pagination < span
 
@@ -111,6 +136,9 @@ tag Pagination < span
 		<self>
 
 tag ListCode < section
+
+	def selectCurrent item
+		if State.current = item:body then router.go "/view/{ item:id }"
 
 	def render
 		<self>
@@ -120,12 +148,15 @@ tag ListCode < section
 			if State.counter isa Number && !State.counter then <section> <dl>
 				<dt> <i.fas.fa-info-circle>
 				<dd> "Данных для просмотра пока еще нет."
-			else if !State.counter then <section>
+			else if !State.pagelist then <div>
 				<i.fas.fa-spinner>
 				<i.fas.fa-spinner>
 				<i.fas.fa-spinner>
 			else
-				<ul .loading=State.waiting >
+				<ul> for item, index in State.pagelist
+					<li :click.selectCurrent( item )>
+						<a> "{ item:body:description } / { item:body:body:length } фрагментов"
+						<CodeMirrorViwer value=item:body:body[0]:body mode=item:body:body[0]:code strings=10>
 
 			<Pagination>
 

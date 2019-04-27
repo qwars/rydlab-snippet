@@ -24,35 +24,30 @@ my $db = $pg->db->listen('insert');
 
 sub getPageSnippers {
     my ( $self, $page, $count ) = @_;
-    $self->send({ json => ['a', 'b'] })
-        
+    $self->send( encode_json $db->select('snippers', '*')->expand->hashes )
 }
 
 sub getSnipper {
     my ( $self, $id ) = @_;
-    # $db->insert('snippers', { title=>'First', body => $body }) && $db->notify('insert');
+    $self->send( $db->select('snippers', ['body'], { id => $id } )->hash->{body} )
 }
-
-sub setSnipper {
-    my ( $self, $json ) = @_;
-    print Dumper $json
-    # $db->insert('snippers', { body => $body }) && $db->notify('insert');
-}
-
-# sub timerSend {
-#     my $self = shift;
-#     Mojo::IOLoop->timer(
-#         5 => sub {
-#             my $loop = shift;
-#             $self->send( getCountSnippers() );
-#             timerSend( $self )
-#         }
-#     );
-# }
 
 post '/' => sub {
-    
-}
+    my $c = shift;
+    $c->req->text;
+    $c->res->headers->header('Access-Control-Allow-Origin' => '*');
+    $c->res->headers->header('Pragma' => 'no-cache');
+    $c->res->headers->header('Cache-Control' => 'no-cache');
+    $c->render(text =>'Yee');
+};
+
+post '/insert' => sub {
+    my $c = shift;
+    $c->res->headers->header('Access-Control-Allow-Origin' => '*');
+    $c->res->headers->header('Pragma' => 'no-cache');
+    $c->res->headers->header('Cache-Control' => 'no-cache');
+    $c->render( text => $db->insert('snippers', { body => $c->req->text }, {returning => 'id'})->hash->{id} )
+};
 
 websocket '/' => sub {
     my $self = shift;
@@ -67,7 +62,6 @@ websocket '/' => sub {
                     }
                 );
             }
-            elsif ( $message =~ /set[:]\s(.+)/ ) { setSnipper( $self, $1 ) }
             elsif ( $message =~ /get[:]\s(\d+)/ ) { getSnipper( $self, $1 ) }
             elsif ( $message =~ /list[:]\s(\d+)\s*(\d+)*/ ) { getPageSnippers( $self, $1, $2 ) }
     });

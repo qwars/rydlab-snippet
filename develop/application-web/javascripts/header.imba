@@ -2,9 +2,10 @@ import 'imba-router'
 import State from './controller.imba'
 
 export tag Header < header
+
 	def render
 		<self>
-			<a>
+			<a route-to="/" :click.clickChangeCurrent>
 				<i> "Q"
 				<i.fab.fa-github>
 				<i.fab.fa-gitlab>

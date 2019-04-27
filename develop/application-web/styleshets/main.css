@@ -57,7 +57,6 @@ main > article form + div s label:hover i { color: rgb(0, 174, 223); }
 main > article form + div s label:active i { color: rgb(0, 108, 137); }
 
 main > section { display: flex; flex-direction: column; position: relative; }
-main > section > section { position: absolute; top: 0px; right: 0px; bottom: 0px; left: 0px; margin: auto; display: flex; align-items: center; justify-content: center; }
 main > section > section > dl {
     background-color: white; border-radius: 4px;
     padding: 16px; display: flex; align-items: center;
@@ -66,22 +65,44 @@ main > section > section > dl i { color: rgb(4,201,255); }
 main > section > section > dl dd { margin-left: 16px; }
 
 
-main > section > section .fa-spinner {
+main div .fa-spinner {
     animation: rotate 2.5s linear infinite;
     color: rgb( 242, 242, 242 );
     font-size: 48px;
 }
-main > section > section .fa-spinner + .fa-spinner {
+main div .fa-spinner + .fa-spinner {
     animation: rotate 1.5s linear infinite reverse;
     color: rgb( 204, 204, 204 );
     margin-left: -24px;
     margin-top: -24px;
 }
-main > section > section .fa-spinner + .fa-spinner + .fa-spinner {
+main div .fa-spinner + .fa-spinner + .fa-spinner {
     animation: rotate 1.3s linear infinite;
     color: rgb( 172, 172, 172 );
     margin-left: -48px;
     margin-top: 24px;
 }
+main h2 + div {
+    position: absolute; top: 0px; right: 0px; bottom: 0px; left: 0px; margin: auto; display: flex; align-items: center; justify-content: center;
+}
 
 @keyframes rotate { to { transform: rotate(360deg); } }
+
+.ListCode > ul { list-style: none; margin: -16px 0px 0px 0px; padding: 0px }
+
+.ListCode > ul a { margin: 16px 0px; display: block; }
+.ListCode > ul li { border: 1px solid rgb(40, 49, 90); border-radius: 5px; padding: 0px 16px; box-sizing: border-box; margin: 16px 0px; }
+.ListCode > ul li .CodeMirrorViwer { margin: 16px 0px }
+
+.CodeViewer > dl {
+    flex-grow: 1;
+    background-color: white;
+    border-radius: 5px;
+    padding: 40px;
+    display: flex; flex-direction: column; 
+}
+
+.CodeViewer > dl > *  { margin: 0px; padding: 0px }
+.CodeViewer > dl dt  { margin-bottom: 24px; font-size: 18px }
+.CodeViewer > dl dd { flex-grow: 1; position: relative; }
+.CodeViewer > dl dd .CodeMirrorViwer, .CodeViewer > dl dd .CodeMirror { height: 100% !important; }
