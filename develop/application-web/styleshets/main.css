@@ -22,10 +22,15 @@ main > article form > section > div {
     display: flex; align-items: center; justify-content: space-between; margin: 16px 0px
 }
 
-main > article form > section > div s { width: 16px }
+main > article form > section > div s { min-width: 16px; width: 16px }
 main > article form > section > div details { min-width: 190px }
-main > article form > section > div label { flex-grow: 1; }
-main > article form > section > div label + i {
+main > article form > section > div label [type="file"] { position: fixed; left: -10000px; visibility: hidden; width: 0px; height: 0px }
+main > article form > section > div label [type="url"] { width: 0px; margin-left: 16px; transition: width .3s; box-sizing: border-box; padding: 0px; border: 0px; margin-right: -16px; }
+main > article form > section > div label:hover [type="url"] { width: 400px; transition: width .3s; padding: 0px 16px; margin-right: 0px }
+main > article form > section > div label [type="url"]:focus { width: 400px; margin-right: 0px; padding: 0px 16px;  }
+main > article form > section > div label { display: flex; align-items: center; justify-content: space-between; }
+main > article form > section > div label:first-child { flex-grow: 1;  }
+main > article form > section > div label + i, main > article form > section > div label > i {
     color: rgb(204,204,204);
     width: 48px;
     height: 48px;
@@ -44,7 +49,12 @@ main > article form + div {
     grid-template-columns: auto 1fr auto;
     grid-template-rows: 48px
 }
-
+main > article form + div s { display: grid; grid-template-columns: 1fr auto; grid-template-rows: 1fr; grid-gap: 16px; padding: 0px 16px; }
+main > article form + div s [type="file"] { visibility: hidden; width: 0px; height: 0px; position: fixed; left: -10000px }
+main > article form + div s label { display: flex; align-items: center; justify-content: center; }
+main > article form + div s label i { color: rgb(4, 201, 255); cursor: pointer; font-size: 18px }
+main > article form + div s label:hover i { color: rgb(0, 174, 223); }
+main > article form + div s label:active i { color: rgb(0, 108, 137); }
 
 main > section { display: flex; flex-direction: column; position: relative; }
 main > section > section { position: absolute; top: 0px; right: 0px; bottom: 0px; left: 0px; margin: auto; display: flex; align-items: center; justify-content: center; }
