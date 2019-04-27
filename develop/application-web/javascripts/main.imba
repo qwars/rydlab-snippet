@@ -140,10 +140,10 @@ tag Pagination < span
 
 	def render
 		<self>
-			<a :click.previosPage> <i.fas.fa-sort-down>
+			<a .active=( State.page > 1 ) :click.previosPage> <i.fas.fa-sort-down>
 			<span>
 				<span> "{ State.page } из { State.pages }"
-			<a :click.nextPage> <i.fas.fa-sort-up>
+			<a .active=( State.page < State.pages ) :click.nextPage> <i.fas.fa-sort-up>
 
 tag ListCode < section
 

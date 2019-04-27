@@ -122,5 +122,6 @@ main h2 + div {
 
 .Pagination a { width: 36px; display: flex; align-items: center; justify-content: center; }
 .Pagination a i { transform: rotate( 90deg ) }
+.Pagination a:not( .active ) { opacity: 0.3; cursor: default; }
 
 .Pagination > span { border: 2px solid rgba(255,255,255,.75); border-width: 0px 2px; padding: 0px 16px; margin: 0px -2px }
