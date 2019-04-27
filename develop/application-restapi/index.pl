@@ -24,7 +24,8 @@ my $db = $pg->db->listen('insert');
 
 sub getPageSnippers {
     my ( $self, $page, $count ) = @_;
-    $self->send( encode_json $db->select('snippers', '*')->expand->hashes )
+    my $offset = ( $page - 1 ) * $count;
+    $self->send( encode_json $db->select('snippers', '*', undef, \"id ASC LIMIT $count OFFSET $offset")->expand->hashes )
 }
 
 sub getSnipper {

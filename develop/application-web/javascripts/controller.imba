@@ -6,6 +6,9 @@ class Application
 	prop pagelist
 	prop current
 
+	def pages
+		Math.ceil @counter / @limit
+
 	def page
 		@page || 1
 
@@ -18,7 +21,7 @@ class Application
 	def counter= value
 		if @counter != value
 			@counter = value
-			@counter >= ( page - 1 ) * @limit && @counter <  page * @limit && @socket.send "list: { page } { @limit }"
+			pages - @limit < @counter && @socket.send "list: { page } { @limit }"
 
 	def getMimeType value
 		Promise.new do |resolve, reject|
