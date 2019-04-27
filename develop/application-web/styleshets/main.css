@@ -88,6 +88,7 @@ main h2 + div {
 
 @keyframes rotate { to { transform: rotate(360deg); } }
 
+.ListCode { padding-bottom: 28px; }
 .ListCode > ul { list-style: none; margin: -16px 0px 0px 0px; padding: 0px }
 
 .ListCode > ul a { margin: 16px 0px; display: block; }
@@ -106,3 +107,20 @@ main h2 + div {
 .CodeViewer > dl dt  { margin-bottom: 24px; font-size: 18px }
 .CodeViewer > dl dd { flex-grow: 1; position: relative; }
 .CodeViewer > dl dd .CodeMirrorViwer, .CodeViewer > dl dd .CodeMirror { height: 100% !important; }
+
+.Pagination {
+    position: absolute; right: 16px; margin-top: 12px;
+    background-color: rgb(182, 237, 255);
+    height: 36px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.Pagination:last-child { bottom: 0px;  }
+
+.Pagination a { width: 36px; display: flex; align-items: center; justify-content: center; }
+.Pagination a i { transform: rotate( 90deg ) }
+
+.Pagination > span { border: 2px solid rgba(255,255,255,.75); border-width: 0px 2px; padding: 0px 16px; margin: 0px -2px }

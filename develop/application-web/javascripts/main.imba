@@ -132,8 +132,18 @@ tag CodeViewer < article
 
 tag Pagination < span
 
+	def previosPage
+		if State.page then State.page = State.page - 1
+
+	def nextPage
+		if State.page < State.pages then State.page = State.page + 1
+
 	def render
 		<self>
+			<a :click.previosPage> <i.fas.fa-sort-down>
+			<span>
+				<span> "{ State.page } из { State.pages }"
+			<a :click.nextPage> <i.fas.fa-sort-up>
 
 tag ListCode < section
 
@@ -142,6 +152,8 @@ tag ListCode < section
 
 	def render
 		<self>
+			if State.counter > State.limit then <Pagination>
+
 			<h2>
 				<i.fas.fa-code>
 				<span> "Все фрагменты"
@@ -158,7 +170,7 @@ tag ListCode < section
 						<a> "{ item:body:description } / { item:body:body:length } фрагментов"
 						<CodeMirrorViwer value=item:body:body[0]:body mode=item:body:body[0]:code strings=10>
 
-			<Pagination>
+			if State.counter > State.limit then <Pagination>
 
 
 export tag Main < main
