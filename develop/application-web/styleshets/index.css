@@ -102,12 +102,12 @@ h2 > i { font-size: 20px; font-weight: 300; margin: 0px 16px  }
 details { position: relative; }
 details summary { cursor: pointer; padding: 16px; position: relative; z-index: 1 }
 details > ul {
-    list-style: none; position: absolute; margin: auto; padding: 16px; top: 0px; right: 0px; left: 0px; z-index: 1;
+    list-style: none; position: absolute; margin: auto; padding: 0px 16px 16px 16px; top: 0px; right: 0px; left: 0px; z-index: 1000;
     border: 1px solid rgb(204,204,204); border-radius: 5px; box-shadow: 3px 3px 6px rgb(172,172,172)
 }
 details > ul li { cursor: pointer; background-color: white; padding: 16px; margin: -8px -16px }
 details > ul li:hover { background-color: rgb( 242,242,242 ) }
-details > ul li:first-child { opacity: 0; margin: 0px; padding: 8px; }
+details > ul li:first-child { margin: 0px -16px; padding: 14px 16px 16px 16px; }
 
 button {
     height: 48px;

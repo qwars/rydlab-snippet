@@ -1,9 +1,16 @@
 import 'imba-router'
 import State from './controller.imba'
 
+require 'codemirror/mode/meta'
+require 'codemirror/mode/perl/perl'
+require 'codemirror/mode/javascript/javascript'
+require 'codemirror/mode/clike/clike'
+require 'codemirror/mode/css/css'
+require 'codemirror/mode/htmlmixed/htmlmixed'
+
 const CodeMirror = require 'codemirror'
 
-console.dir CodeMirror:models
+console.dir CodeMirror
 
 tag FormEditor < form
 	prop item
@@ -42,7 +49,7 @@ tag FormEditor < form
 
 
 tag CodeEditors < article
-	prop snipper default: []
+	prop snipper default: [{}]
 
 	def setup
 		dom:ownerDocument:body.addEventListener 'click', do |e|
