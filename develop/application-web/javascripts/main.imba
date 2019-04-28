@@ -9,6 +9,9 @@ require 'codemirror/mode/css/css'
 require 'codemirror/mode/htmlmixed/htmlmixed'
 
 const CodeMirror = require 'codemirror'
+const moment = require 'moment'
+
+moment.locale 'ru'
 
 tag FormEditor < form
 	prop item
@@ -193,7 +196,10 @@ tag ListCode < section
 			else
 				<ul> for item, index in State.pagelist
 					<li :click.selectCurrent( item )>
-						<a> "{ item:body:description } / { item:body:snippers:length } фрагментов"
+						console.log item:created
+						<a>
+							<i.fas.fa-file-code>
+							"{ item:body:description } ( { moment( item:created ).fromNow } ), фрагментов: { item:body:snippers:length }"
 						<CodeMirrorViwer value=item:body:snippers[0]:body mode=item:body:snippers[0]:code strings=10>
 
 			if State.counter > State.limit then <Pagination>

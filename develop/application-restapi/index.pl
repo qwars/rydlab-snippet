@@ -15,7 +15,7 @@ use MIME::Types;
 
 # При первом запуске создаем таблицу 'snippers'
 
-`sudo -u postgres psql -c 'CREATE TABLE IF NOT EXISTS snippers ( id serial primary key, body json );'`;
+`sudo -u postgres psql -c 'CREATE TABLE IF NOT EXISTS snippers ( id serial primary key, created TIMESTAMP DEFAULT NOW(), body json );'`;
 
 my $pg = Mojo::Pg->new( 'postgresql://postgres@/postgres' );
 
@@ -63,7 +63,7 @@ get '/list/:count/:page' => sub {
     $c->res->headers->header( 'Cache-Control'               => 'no-cache' );
     my $count  = $c->param( 'count' );
     my $offset = ( $c->param( 'page' ) - 1 ) * $count;
-    $c->render( json => $db->select( 'snippers', '*', undef, \"id ASC LIMIT $count OFFSET $offset" )->expand->hashes );
+    $c->render( json => $db->select( 'snippers', '*', undef, \"id DESC LIMIT $count OFFSET $offset" )->expand->hashes );
 };
 
 =item C<get '/insert'> - Добавление нового snipper. Пример: C<POST>   http://example.com/insert

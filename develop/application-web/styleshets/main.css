@@ -244,6 +244,7 @@ main h2+div {
     margin: 16px 0px;
     display: block;
 }
+.ListCode>ul a i { margin-right: 1em; }
 
 .ListCode>ul li {
     border: 1px solid rgb(40, 49, 90);

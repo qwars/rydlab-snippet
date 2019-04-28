@@ -33,6 +33,7 @@
   "dependencies": {
     "codemirror": "^5.46.0",
     "imba": "^1.4.2",
-    "imba-router": "^0.2.0"
+    "imba-router": "^0.2.0",
+    "moment": "^2.24.0"
   }
 }
