@@ -1,10 +1,12 @@
-const URI = 'ws://localhost:3000'
+const URI = 'http://localhost:3000'
 
 class Application
 	prop limit default: 24
-	prop socket default: WebSocket.new URI
+	prop waiting default: true
+	prop socket default: WebSocket.new URI.replace( 'http', 'ws' )
 	prop pagelist
 	prop current
+	prop counter
 
 	def pages
 		Math.ceil @counter / @limit
@@ -13,41 +15,42 @@ class Application
 		@page || 1
 
 	def page= value
-		if @page = value then @socket.send "list: { page } { @limit }"
-
-	def counter
-		@counter
-
-	def counter= value
-		if @counter != value
-			@counter = value
-			pages - @limit < @counter && @socket.send "list: { page } { @limit }"
+		currentPage @page = value
 
 	def getMimeType value
 		Promise.new do |resolve, reject|
-			window.fetch( URI.replace( 'ws', 'http' ), { method: 'post', body: value } )
+			window.fetch( URI, { method: 'post', body: value } )
 				.catch( do |error| reject error )
-				.then do |resource| resource.text.then do |response| resolve response
+				.then do |resource| resource.json.then do |response| resolve response
 
 	def createSnipper dataset
-		window.fetch( URI.replace( 'ws', 'http' ) + '/insert', { method: 'post', body: JSON.stringify dataset } )
-			.catch( do |error| console.log error )
-			.then do |resource| resource.text.then do |iD|
-				@current = dataset
-				window:location:href = "/view/{ iD }"
-				Imba.commit
+		Promise.new do |resolve, reject|
+			@waiting = !!window.fetch( URI + '/insert', { method: 'post', body: JSON.stringify dataset } ).catch( do |error| reject error )
+				.then do |resource| resource.text.then do |iD|
+					if @current = dataset then Imba.commit @waiting = resolve iD
+
+	def currentPage pID
+		!!pID && Promise.new do |resolve, reject|
+			@waiting = !!window.fetch( "{ URI }/list/{ @limit }/{ pID }", { method: 'get' } ).catch( do |error| reject error )
+				.then do |resource| resource.json.then do |response|
+					if @pagelist = response then Imba.commit @waiting = resolve response
+					else
+						Imba.commit @waiting = @pagelist = resolve response
+
+	def currentSnipper iD
+		!!iD && Promise.new do |resolve, reject|
+			@waiting = !!window.fetch( "{ URI }/view/{ iD }", { method: 'get' } ).catch( do |error| reject error )
+				.then do |resource| resource.json.then do |response|
+					if @current = response then Imba.commit @waiting = resolve iD
+					else
+						Imba.commit @waiting = @current = resolve iD
 
 	def initialize
 		@socket:onmessage = do|e|
-			let dataset = JSON.parse e:data
-
-			if !@counter && !@current && let iD = Number window:location:pathname.split('/').reverse[0] then @socket.send "get: { iD }"
-
-			if dataset isa Number then counter = dataset
-			else if Array.isArray dataset then @pagelist = dataset
-			else if dataset isa Object then @current = dataset
-
-			Imba.commit
+			currentSnipper 1
+			if !@counter = Number e:data then Imba.commit @waiting = undefined
+			else
+				currentPage pages == page, currentSnipper !@current && window:location:pathname.includes('view') && Number window:location:pathname.split('/').reverse[0]
 
 		@socket:onopen = do socket.send "start"
 

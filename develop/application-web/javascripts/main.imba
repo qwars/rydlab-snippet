@@ -13,6 +13,14 @@ const CodeMirror = require 'codemirror'
 tag FormEditor < form
 	prop item
 	prop index
+	prop modes default: [
+		{ name: "Auto", mode: '' },
+		CodeMirror.findModeByExtension 'pl'
+		CodeMirror.findModeByExtension 'js'
+		CodeMirror.findModeByExtension 'java'
+		CodeMirror.findModeByExtension 'css'
+		CodeMirror.findModeByExtension 'html'
+	]
 
 	def mount
 		querySelector( 'section > section' ).dom:textContent = ''
@@ -22,25 +30,30 @@ tag FormEditor < form
 			value: @item:body || ''
 			}
 		@cm.on "change", do |edoc| @timeout = clearTimeout( @timeout ) || setTimeout( &, 300 ) do
-			State.getMimeType( @item:body = edoc.getValue ).then do |response|
-				console.log response
-				Imba.commit
+			@item:body = edoc.getValue
+			Imba.commit
 
 	def changeSnipperName
-		@item:filename = @filename.value
+		if @filename.dom:validity:valid && @item:filename = @filename.value then !@item:code && changeSnipperCode CodeMirror.findModeByExtension( @item:filename.split('.').reverse[0] )
 
 	def changeSnipperCode code
-		if  @item:code = code:name || '' then @cm.setOption "mode", code:mode || 'text'
+		if !code then State.getMimeType( "ext.{ @item:filename.split('.').reverse[0] }" )
+			.then do |response| if ( !@item:code || !@item:code:mode ) && response:filename.split('.').reverse[0] == @item:filename.split('.').reverse[0] then render changeSnipperCode response
+		else
+			@item:code = code
+			@cm.setOption "mode", @item:code:mode
 
 	def createSnipperHref
-		@timeout = clearTimeout( @timeout ) || setTimeout( &, 300 ) do
-			@href.dom:validity:valid && window.fetch( @href.value, { mode: 'cors' } ).then do |response|
-				response.text.then do|text| @cm.setValue @item:body = "{ @item:body || '' }\n{ text }"
+		@href.dom:validity:valid && window.fetch( @href.value, { mode: 'no-cors' } ).then do |response|
+			changeSnipperName @filename.value = @filename.value || @href.value
+			response.text.then do|text| @cm.setValue @item:body = "{ @item:body || '' }\n{ text }"
 
 	def createSnipperFile e
 		let reader = FileReader.new
 		reader:onload = do|file| @cm.setValue @item:body = "{ @item:body || '' }\n{ file:target:result }"
-		Array.from e.target.dom:files, do |item| reader.readAsText item
+		Array.from e.target.dom:files, do |item|
+			changeSnipperName @filename.value = @filename.value || item:name
+			reader.readAsText item
 
 	def render
 		<self>
@@ -56,34 +69,30 @@ tag FormEditor < form
 					<i.far.fa-trash-alt :click.deleteSnipperCode( @index )>
 					<s>
 					<details>
-						<summary> !!@item:code && @item:code != 'text' ? @item:code : "Выбрать язык кода"
-						<ul>
-							<li :click.changeSnipperCode( { mode: 'text' } ) > "Auto"
-							<li :click.changeSnipperCode( { name: "Perl", mode: 'perl' } )> "Perl"
-							<li :click.changeSnipperCode( { name: "JavaScript", mode: "javascript" } )> "JavaScript"
-							<li :click.changeSnipperCode( { name: "Java", mode: "clike" } )> "Java"
-							<li :click.changeSnipperCode( { name: "CSS", mode: "css" } )> "CSS"
-							<li :click.changeSnipperCode( { name: "HTML", mode: "htmlmixed" } )> "HTML"
+						<summary> @item:code && @modes.filter( do |item| item:mode && item:mode == @item:code:mode ):length > 0 ? @item:code:name : "Выбрать язык кода"
+						<ul> for item in @modes
+							<li .active=( @item:code && item:mode == @item:code:mode ) :click.changeSnipperCode( item ) > item:name
 				<section>
 
 
 tag CodeEditors < article
-	prop snipper default: [{ code: 'text' }]
+	prop snipper default: [{}]
 
 	def setup
 		dom:ownerDocument:body.addEventListener 'click', do |e|
 			if let el = dom.querySelector('details[open]') then el.removeAttribute 'open'
 	def mount
-		@snipper = [{ code: 'text' }]
+		@snipper = [{}]
 
 	def createSnipperCode
-		@snipper.push { code: 'text' }
+		@snipper.push {}
 
 	def deleteSnipperCode index
 		if index && index isa Number then @snipper.splice index, 1
 
 	def saveSnippers
-		!!countSnippers && State.createSnipper { body: @snipper, description: @description.value  }
+		!!countSnippers && State.createSnipper( { snippers: @snipper, description: @description.value  } )
+			.then do |response| router.go "/view/{ response }"
 
 	def countSnippers
 		!!@description.value && @snipper:length && @snipper.filter( do |item| !!item:body && !!item:filename && !!item:code ):length
@@ -120,15 +129,21 @@ tag CodeViewer < article
 		<self>
 			<h2>
 				<i.fas.fa-file-code>
-				<span> State.current ? State.current:description : "Фрагменты кода загружаются"
-			if !State.current then <div>
+				if State.waiting then <span> "Фрагменты кода загружаются"
+				else if !State.current then <span> "Фрагменты кода"
+				else <span> State.current:description
+
+			if State.waiting then <div>
 				<i.fas.fa-spinner>
 				<i.fas.fa-spinner>
 				<i.fas.fa-spinner>
+			else if !State.current then <dl.info>
+				<dt> <i.fas.fa-info-circle>
+				<dd> "Данных для просмотра пока еще нет."
 			else
-				<dl> for item, index in State.current:body
-					<dt> item:filename
-					<dd> <CodeMirrorViwer value=item:body mode=item:model >
+				<dl> for item, index in State.current:snippers
+				<dt> item:filename
+				<dd> <CodeMirrorViwer value=item:body mode=item:model >
 
 tag Pagination < span
 
@@ -157,18 +172,18 @@ tag ListCode < section
 			<h2>
 				<i.fas.fa-code>
 				<span> "Все фрагменты"
-			if State.counter isa Number && !State.counter then <section> <dl>
+			if State.counter isa Number && !State.counter then <dl.info>
 				<dt> <i.fas.fa-info-circle>
 				<dd> "Данных для просмотра пока еще нет."
-			else if !State.pagelist then <div>
+			else if State.waiting then <div>
 				<i.fas.fa-spinner>
 				<i.fas.fa-spinner>
 				<i.fas.fa-spinner>
 			else
 				<ul> for item, index in State.pagelist
 					<li :click.selectCurrent( item )>
-						<a> "{ item:body:description } / { item:body:body:length } фрагментов"
-						<CodeMirrorViwer value=item:body:body[0]:body mode=item:body:body[0]:code strings=10>
+						<a> "{ item:body:description } / { item:body:snippers:length } фрагментов"
+						<CodeMirrorViwer value=item:body:snippers[0]:body mode=item:body:snippers[0]:code strings=10>
 
 			if State.counter > State.limit then <Pagination>
 

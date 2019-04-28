@@ -57,13 +57,13 @@ main > article form + div s label:hover i { color: rgb(0, 174, 223); }
 main > article form + div s label:active i { color: rgb(0, 108, 137); }
 
 main > section { display: flex; flex-direction: column; position: relative; }
-main > section > section > dl {
+main dl.info {
     background-color: white; border-radius: 4px;
-    padding: 16px; display: flex; align-items: center;
+    padding: 16px; margin: 16px 0px;
+    display: flex; align-items: center; flex-direction: row;
 }
-main > section > section > dl i { color: rgb(4,201,255); }
-main > section > section > dl dd { margin-left: 16px; }
-
+main dl.info i { color: rgb(4,201,255); }
+main dl.info dd { margin-left: 16px; }
 
 main div .fa-spinner {
     animation: rotate 2.5s linear infinite;
@@ -95,7 +95,7 @@ main h2 + div {
 .ListCode > ul li { border: 1px solid rgb(40, 49, 90); border-radius: 5px; padding: 0px 16px; box-sizing: border-box; margin: 16px 0px; }
 .ListCode > ul li .CodeMirrorViwer { margin: 16px 0px }
 
-.CodeViewer > dl {
+.CodeViewer > dl:not(.info) {
     flex-grow: 1;
     background-color: white;
     border-radius: 5px;
@@ -103,10 +103,10 @@ main h2 + div {
     display: flex; flex-direction: column; 
 }
 
-.CodeViewer > dl > *  { margin: 0px; padding: 0px }
-.CodeViewer > dl dt  { margin-bottom: 24px; font-size: 18px }
-.CodeViewer > dl dd { flex-grow: 1; position: relative; }
-.CodeViewer > dl dd .CodeMirrorViwer, .CodeViewer > dl dd .CodeMirror { height: 100% !important; }
+.CodeViewer > dl:not(.info) > *  { margin: 0px; padding: 0px }
+.CodeViewer > dl:not(.info) dt  { margin-bottom: 24px; font-size: 18px }
+.CodeViewer > dl:not(.info) dd { flex-grow: 1; position: relative; }
+.CodeViewer > dl:not(.info) dd .CodeMirrorViwer, .CodeViewer > dl dd .CodeMirror { height: 100% !important; }
 
 .Pagination {
     position: absolute; right: 16px; margin-top: 12px;

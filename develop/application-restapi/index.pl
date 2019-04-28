@@ -7,14 +7,13 @@
 use warnings;
 use strict;
 
+use utf8;
 use Mojolicious::Lite;
-use Mojo::IOLoop;
 use Mojo::Pg;
 use Mojo::JSON qw(decode_json encode_json);
+use MIME::Types;
 
 use Data::Dumper;
-
-my $count = 0;
 
 `sudo -u postgres psql -c 'CREATE TABLE IF NOT EXISTS snippers ( id serial primary key, body json );'`;
 
@@ -22,24 +21,25 @@ my $pg = Mojo::Pg->new('postgresql://postgres@/postgres');
 
 my $db = $pg->db->listen('insert');
 
-sub getPageSnippers {
-    my ( $self, $page, $count ) = @_;
-    my $offset = ( $page - 1 ) * $count;
-    $self->send( encode_json $db->select('snippers', '*', undef, \"id ASC LIMIT $count OFFSET $offset")->expand->hashes )
-}
+my $mt = MIME::Types->new;
 
-sub getSnipper {
-    my ( $self, $id ) = @_;
-    $self->send( $db->select('snippers', ['body'], { id => $id } )->hash->{body} )
-}
-
-post '/' => sub {
+get '/view/:id' => sub {
     my $c = shift;
-    $c->req->text;
     $c->res->headers->header('Access-Control-Allow-Origin' => '*');
     $c->res->headers->header('Pragma' => 'no-cache');
     $c->res->headers->header('Cache-Control' => 'no-cache');
-    $c->render(text =>'Yee');
+    my $response = $db->select('snippers', ['body'], { id => $c->param('id') } )->hash;
+    $c->render( text => $response ? $response->{body} : 'null' )
+};
+
+get '/list/:count/:page' => sub {
+    my $c = shift;
+    $c->res->headers->header('Access-Control-Allow-Origin' => '*');
+    $c->res->headers->header('Pragma' => 'no-cache');
+    $c->res->headers->header('Cache-Control' => 'no-cache');
+    my $count = $c->param('count');
+    my $offset = ( $c->param('page') - 1 ) * $count;
+    $c->render( json => $db->select('snippers', '*', undef, \"id ASC LIMIT $count OFFSET $offset")->expand->hashes );
 };
 
 post '/insert' => sub {
@@ -47,24 +47,33 @@ post '/insert' => sub {
     $c->res->headers->header('Access-Control-Allow-Origin' => '*');
     $c->res->headers->header('Pragma' => 'no-cache');
     $c->res->headers->header('Cache-Control' => 'no-cache');
-    $c->render( text => $db->insert('snippers', { body => $c->req->text }, {returning => 'id'})->hash->{id} )
+    my $response = $db->insert('snippers', { body => $c->req->text }, {returning => 'id'})->hash;
+    $c->render( text => $response ? $response->{id} : 'null' )
 };
+
+post '/' => sub {
+    my $c = shift;
+    $c->res->headers->header('Access-Control-Allow-Origin' => '*');
+    $c->res->headers->header('Pragma' => 'no-cache');
+    $c->res->headers->header('Cache-Control' => 'no-cache');
+    my $filename = $c->req->text =~ /ext\.(\w+?)*$/ ? $c->req->text : 'ext.txt' ;
+    my $mm = $mt->mimeTypeOf( $filename );
+    my $mime = { %{ $mm || {}  }, ( filename => $filename , mode => ( $mm ? $mm->subType() : 'text'  ) ) };
+    $c->render( json => $mime )
+};
+
 
 websocket '/' => sub {
     my $self = shift;
     $self->on(
         message => sub {
             my ($self, $message) = @_;
-            if ( $message eq 'start' ) {
-                $self->send( $db->query('select count(id) from snippers')->hash->{count} );
-                $db->on(
-                    notification => sub {                        
-                        $self->send( $db->query('select count(id) from snippers')->hash->{count} )
-                    }
-                );
-            }
-            elsif ( $message =~ /get[:]\s(\d+)/ ) { getSnipper( $self, $1 ) }
-            elsif ( $message =~ /list[:]\s(\d+)\s*(\d+)*/ ) { getPageSnippers( $self, $1, $2 ) }
+            $self->send( $db->query('select count(id) from snippers')->hash->{count} );
+            $db->on(
+                notification => sub {                        
+                    $self->send( text => $db->query('select count(id) from snippers')->hash->{count} )
+                }
+            );
     });
 };
 
