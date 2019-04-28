@@ -79,7 +79,9 @@ tag FormEditor < form
 					<i.far.fa-trash-alt :click.deleteSnipperCode( @index )>
 					<s>
 					<details>
-						<summary> @item:code && @modes.filter( do |item| item:mode && item:mode == @item:code:mode ):length > 0 ? @item:code:name : "Выбрать язык кода"
+						if @item:code && @modes.filter( do |item| item:mode && item:mode == @item:code:mode ):length > 0 then <summary> @item:code:name
+						else
+							<summary> "Выбрать язык кода"
 						<ul> for item in @modes
 							<li .active=( @item:code && item:mode == @item:code:mode ) :click.changeSnipperCode( item ) > item:name
 				<section>
@@ -197,7 +199,6 @@ tag ListCode < section
 			else
 				<ul> for item, index in State.pagelist
 					<li :click.selectCurrent( item )>
-						console.log item:created
 						<a>
 							<i.fas.fa-file-code>
 							"{ item:body:description } ( { moment( item:created ).fromNow } ), фрагментов: { item:body:snippers:length }"
