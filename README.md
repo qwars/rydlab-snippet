@@ -74,6 +74,6 @@ CPAN модули
 
 ### Video
 
-[!(Sample Video)](https://github.com/qwars/rydlab-snippet/blob/master/out.ogv)
+[!(Sample Video)](https://github.com/qwars/rydlab-snippet/blob/master/out.m4v)
 
 
