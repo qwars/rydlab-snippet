@@ -48,6 +48,7 @@ tag FormEditor < form
 		else
 			@item:code = code
 			@cm.setOption "mode", @item:code:mode
+			render
 
 	def createSnipperHref
 		@href.dom:validity:valid && window.fetch( @href.value ).then do |response|
