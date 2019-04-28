@@ -74,6 +74,6 @@ CPAN модули
 
 ### Video
 
-![Sample Video](https://git.teobit.ru/rydlab-snippet/raw/master/out.ogv)
+![Sample Video](https://git.teobit.ru/qwars/rydlab-snippet/raw/master/out.ogv)
 
 
