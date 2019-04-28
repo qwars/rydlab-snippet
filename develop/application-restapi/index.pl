@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
-# index.pl --- TEst
-# Author: Alexandr Selunin <qwars@HP-Laptop-Linux>
+# index.pl --- Тестовое задание
+# Author: Alexandr Selunin <aka.qwars@gmail.com>
 # Created: 19 Apr 2019
 # Version: 0.01
 
@@ -13,92 +13,129 @@ use Mojo::Pg;
 use Mojo::JSON qw(decode_json encode_json);
 use MIME::Types;
 
-use Data::Dumper;
+# При первом запуске создаем таблицу 'snippers'
 
 `sudo -u postgres psql -c 'CREATE TABLE IF NOT EXISTS snippers ( id serial primary key, body json );'`;
 
-my $pg = Mojo::Pg->new('postgresql://postgres@/postgres');
+my $pg = Mojo::Pg->new( 'postgresql://postgres@/postgres' );
 
-my $db = $pg->db->listen('insert');
+my $db = $pg->db->listen( 'insert' );
 
 my $mt = MIME::Types->new;
 
+=head1 NAME
+
+index.pl - ws сервер
+
+=head1 SYNOPSIS
+
+morbo -m production -w ./index.pl ./index.pl
+
+=head1 DESCRIPTION
+
+=over
+
+=item C<get '/view/:id'> - Получение данных snipper по id. Пример: C<GET>  http://example.com/view/34
+
+=cut
+
+# Получение данных snipper по id. Пример:  http://example.com/view/34
+
 get '/view/:id' => sub {
     my $c = shift;
-    $c->res->headers->header('Access-Control-Allow-Origin' => '*');
-    $c->res->headers->header('Pragma' => 'no-cache');
-    $c->res->headers->header('Cache-Control' => 'no-cache');
-    my $response = $db->select('snippers', ['body'], { id => $c->param('id') } )->hash;
-    $c->render( text => $response ? $response->{body} : 'null' )
+    $c->res->headers->header( 'Access-Control-Allow-Origin' => '*' );
+    $c->res->headers->header( 'Pragma'                      => 'no-cache' );
+    $c->res->headers->header( 'Cache-Control'               => 'no-cache' );
+    my $response = $db->select( 'snippers', ['body'], { id => $c->param( 'id' ) } )->hash;
+    $c->render( text => $response ? $response->{body} : 'null' );
 };
+
+=item C<get '/list/:count/:page'> - Получение данных списка snipper. Пример: C<GET>  http://example.com//list/24/4
+
+=cut
+
+# Получение данных списка snipper. Пример:  http://example.com//list/24/4
 
 get '/list/:count/:page' => sub {
     my $c = shift;
-    $c->res->headers->header('Access-Control-Allow-Origin' => '*');
-    $c->res->headers->header('Pragma' => 'no-cache');
-    $c->res->headers->header('Cache-Control' => 'no-cache');
-    my $count = $c->param('count');
-    my $offset = ( $c->param('page') - 1 ) * $count;
-    $c->render( json => $db->select('snippers', '*', undef, \"id ASC LIMIT $count OFFSET $offset")->expand->hashes );
+    $c->res->headers->header( 'Access-Control-Allow-Origin' => '*' );
+    $c->res->headers->header( 'Pragma'                      => 'no-cache' );
+    $c->res->headers->header( 'Cache-Control'               => 'no-cache' );
+    my $count  = $c->param( 'count' );
+    my $offset = ( $c->param( 'page' ) - 1 ) * $count;
+    $c->render( json => $db->select( 'snippers', '*', undef, \"id ASC LIMIT $count OFFSET $offset" )->expand->hashes );
 };
+
+=item C<get '/insert'> - Добавление нового snipper. Пример: C<POST>   http://example.com/insert
+
+Тело запроса содержит JSON данные snipper
+
+=cut
+
+# Добавление нового snipper. Пример: C<POST>   http://example.com/insert
 
 post '/insert' => sub {
     my $c = shift;
-    $c->res->headers->header('Access-Control-Allow-Origin' => '*');
-    $c->res->headers->header('Pragma' => 'no-cache');
-    $c->res->headers->header('Cache-Control' => 'no-cache');
-    my $response = $db->insert('snippers', { body => $c->req->text }, {returning => 'id'})->hash;
-    $c->render( text => $response ? $response->{id} : 'null' )
+    $c->res->headers->header( 'Access-Control-Allow-Origin' => '*' );
+    $c->res->headers->header( 'Pragma'                      => 'no-cache' );
+    $c->res->headers->header( 'Cache-Control'               => 'no-cache' );
+    my $response = $db->insert( 'snippers', { body => $c->req->text }, { returning => 'id' } )->hash;
+    $c->render( text => $response ? $response->{id} : 'null' );
 };
+
+=item C<get '/'> - Получение MIME данных. Пример: C<POST>   http://example.com/
+
+Тело запроса содержит имя файла
+
+=cut
+
+# Получение MIME данных. Пример: C<POST>   http://example.com/
 
 post '/' => sub {
     my $c = shift;
-    $c->res->headers->header('Access-Control-Allow-Origin' => '*');
-    $c->res->headers->header('Pragma' => 'no-cache');
-    $c->res->headers->header('Cache-Control' => 'no-cache');
-    my $filename = $c->req->text =~ /ext\.(\w+?)*$/ ? $c->req->text : 'ext.txt' ;
-    my $mm = $mt->mimeTypeOf( $filename );
-    my $mime = { %{ $mm || {}  }, ( filename => $filename , mode => ( $mm ? $mm->subType() : 'text'  ) ) };
-    $c->render( json => $mime )
+    $c->res->headers->header( 'Access-Control-Allow-Origin' => '*' );
+    $c->res->headers->header( 'Pragma'                      => 'no-cache' );
+    $c->res->headers->header( 'Cache-Control'               => 'no-cache' );
+    my $filename = $c->req->text =~ /ext\.(\w+?)*$/ ? $c->req->text : 'ext.txt';
+    my $mm       = $mt->mimeTypeOf( $filename );
+    my $mime     = { %{ $mm || {} }, ( filename => $filename, mode => ( $mm ? $mm->subType() : 'text' ) ) };
+    $c->render( json => $mime );
 };
 
+=item C<websocket '/' > - Запуск демона ws для слежение за состоянием таблицы Pg 'snipper'. Пример:  ws://example.com/
+
+Возвращаем количество данных в таблице, при изменении данных
+
+=back
+
+=cut
+
+# Демон ws для слежение за состоянием таблицы Pg 'snipper'. Пример:  ws://example.com/
 
 websocket '/' => sub {
     my $self = shift;
     $self->on(
         message => sub {
-            my ($self, $message) = @_;
-            $self->send( $db->query('select count(id) from snippers')->hash->{count} );
+            my ( $self, $message ) = @_;
+            $self->send( $db->query( 'select count(id) from snippers' )->hash->{count} );
+
+            # Вешаем слушателя, возвращаем количество данных в таблице
             $db->on(
-                notification => sub {                        
-                    $self->send( text => $db->query('select count(id) from snippers')->hash->{count} )
-                }
-            );
-    });
+                notification => sub {
+                    $self->send( text => $db->query( 'select count(id) from snippers' )->hash->{count} );
+                } );
+        } );
 };
 
+# Стартуем демона
 
 app->start;
 
 __END__
 
-=head1 NAME
-
-index.pl - Describe the usage of script briefly
-
-=head1 SYNOPSIS
-
-index.pl [options] args
-
-      -opt --long      Option description
-
-=head1 DESCRIPTION
-
-Stub documentation for index.pl, 
-
 =head1 AUTHOR
 
-Alexandr Selunin, E<lt>qwars@HP-Laptop-LinuxE<gt>
+Alexandr Selunin, E<lt>aka.qwars@gmail.com<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
