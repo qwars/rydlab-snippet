@@ -182,6 +182,9 @@ tag ListCode < section
 	def selectCurrent item
 		if State.current = item:body then router.go "/view/{ item:id }"
 
+	def langUse item
+		Set.new item.map do |s| s:code:mode
+
 	def render
 		<self>
 			if State.counter > State.limit then <Pagination>
@@ -201,7 +204,7 @@ tag ListCode < section
 					<li :click.selectCurrent( item )>
 						<a>
 							<i.fas.fa-file-code>
-							"{ item:body:description } ( { moment( item:created ).fromNow } ), фрагментов: { item:body:snippers:length }"
+							"{ item:body:description } ( { moment( item:created ).fromNow } ), фрагментов: { item:body:snippers:length }, используемых языков: { langUse( item:body:snippers ):size } "
 						<CodeMirrorViwer value=item:body:snippers[0]:body mode=item:body:snippers[0]:code strings=10>
 
 			if State.counter > State.limit then <Pagination>
