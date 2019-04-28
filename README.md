@@ -1,6 +1,7 @@
 # rydlab-snippet
 
-Тестовое задание для rydlab.ru:
+
+## Тестовое задание для rydlab.ru:
 
 Разработать веб приложение для работы со сниппетами (фрагментами) кода, аналогичное https://gist.github.com/. Пользоваться сервисом можно только анонимно без заведения учетных записей.
 
@@ -23,5 +24,56 @@
 3. Опишите неочевидные моменты, связанные с запуском, чтоб максимально упростить жизнь проверяющему
 
 4. Результат задания должен демонстрировать ваши знания и стиль. Представьте, что пишете производственное приложение. Будут учитываться все аспекты - от читабельности до безопасности.
+
+## Установка и настройка
+
+Для установки понадобиться:
+
+[nodejs](https://nodejs.org/ "nodejs") ```$ sudo apt install nodejs```
+
+Для настройки: ```npm i```
+
+[CPAN](https://www.cpan.org/ "CPAN") ```$ sudo apt install libmojolicious-perl libmojo-pg-perl libjson-validator-perl libmime-types-perl```
+
+CPAN модули
+
+    Mojolicious::Lite
+    Mojo::Pg
+    Mojo::JSON
+    MIME::Types
+
+
+### Web - сервер 
+
+`develop/application-web` - директория разработки для клиента ( front-end )
+
+`develop/application-web/javascripts` - директория разработки javascript
+
+> при загрузке сервера webpack собирает /javascripts/application.js из index.imba 
+
+`develop/application-web/styleshets` - директория разработки css
+
+> при загрузке сервера webpack собирает /styleshets/styles.css из /javascripts/styleshets.imba 
+
+`develop/application-web/index.html` - основной загрузочный файл, переносится как есть
+
+
+### Back-end - сервер 
+
+`develop/application-restapi` - директория разработки для клиента ( back-end )
+
+## Запуск
+
+Простого сервера на http://localhost:9090 : ```npm run dev```
+
+Сервера c back-end на http://localhost:3000 : ```npm run dev-server```
+
+> **Note:** Можно по отдельности, перейти в `develop/application-restapi` и запуск back-end ```morbo -m production -w ./index.pl ./index.pl```
+
+Сборка в директорию /public : ```npm run build```
+
+### Video
+
+![Sample Video](https://git.teobit.ru/rydlab-snippet/raw/master/out.ogv)
 
 
