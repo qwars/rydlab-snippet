@@ -24,6 +24,9 @@ tag FormEditor < form
 
 	def mount
 		querySelector( 'section > section' ).dom:textContent = ''
+		if @filename then @filename.value = ''
+		if @href then @href.value = ''
+		if @file then @file.value = ''
 		@cm = CodeMirror querySelector( 'section > section' ).dom, {
 			lineNumbers: true,
 			mode: "text",
@@ -51,7 +54,9 @@ tag FormEditor < form
 
 	def createSnipperFile e
 		let reader = FileReader.new
-		reader:onload = do|file| @cm.setValue @item:body = "{ @item:body || '' }\n{ file:target:result }"
+		reader:onload = do|file|
+			@file.value = ''
+			@cm.setValue @item:body = "{ @item:body || '' }\n{ file:target:result }"
 		Array.from e.target.dom:files, do |item|
 			changeSnipperName @filename.value = @filename.value || item:name
 			reader.readAsText item

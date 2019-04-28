@@ -50,7 +50,7 @@ class Application
 		@socket:onmessage = do|e|
 			if !@counter = Number e:data then Imba.commit @waiting = undefined
 			else
-				currentPage pages == page, currentSnipper !@current && window:location:pathname.includes('view') && Number window:location:pathname.split('/').reverse[0]
+				currentPage !@page || pages == page, currentSnipper !@current && window:location:pathname.includes('view') && Number window:location:pathname.split('/').reverse[0]
 
 		@socket:onopen = do socket.send "start"
 
