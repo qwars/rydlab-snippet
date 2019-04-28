@@ -25,18 +25,31 @@ body {
     outline: 0px solid transparent;
 }
 
-dfn, u, caption, a, del, i, var, samp, code, s, ins {
+dfn,
+u,
+caption,
+a,
+del,
+i,
+var,
+samp,
+code,
+s,
+ins {
     font: normal normal 400 normal 14px / normal Montserrat-Regular, Montserrat;
     text-decoration: none;
 }
 
-a, del {
-    color: rgb(4,201,255);
+a,
+del {
+    color: rgb(4, 201, 255);
     text-decoration: none;
     cursor: pointer;
 }
 
-a:hover { color: rgb(129, 143, 205); }
+a:hover {
+    color: rgb(129, 143, 205);
+}
 
 
 input {
@@ -54,32 +67,40 @@ input {
     transition: color .3s, border-color .3s;
 }
 
-input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
     appearance: none;
     margin: 0;
 }
+
 input::-webkit-input-placeholder {
     color: rgb(162, 200, 216);
-}              
+}
+
 input::-moz-input-placeholder {
     color: rgb(162, 200, 216);
 }
+
 input::-ms-input-placeholder {
     color: rgb(162, 200, 216);
 }
+
 input::input-placeholder {
     color: rgb(162, 200, 216);
 }
+
 input:-webkit-input-placeholder {
     color: rgb(162, 200, 216);
 }
+
 input:-moz-input-placeholder {
     color: rgb(162, 200, 216);
 }
+
 input:-ms-input-placeholder {
     color: rgb(162, 200, 216);
 }
+
 input:input-placeholder {
     color: rgb(162, 200, 216);
 }
@@ -87,7 +108,7 @@ input:input-placeholder {
 input:invalid {
     border-color: rgb(255, 49, 52);
     color: rgb(255, 49, 52);
-    transition: color .3s,border-color .3s;
+    transition: color .3s, border-color .3s;
 }
 
 
@@ -96,24 +117,60 @@ h2 {
     color: white;
     text-align: left
 }
-h2 > i { font-size: 20px; font-weight: 300; margin: 0px 16px  }
 
-
-details { position: relative; }
-details summary { cursor: pointer; padding: 16px; position: relative; z-index: 1 }
-details > ul {
-    list-style: none; position: absolute; margin: auto; padding: 0px 16px 16px 16px; top: 0px; right: 0px; left: 0px; z-index: 1000;
-    border: 1px solid rgb(204,204,204); border-radius: 5px; box-shadow: 3px 3px 6px rgb(172,172,172)
+h2>i {
+    font-size: 20px;
+    font-weight: 300;
+    margin: 0px 16px
 }
-details > ul li { cursor: pointer; background-color: white; padding: 16px; margin: -8px -16px }
-details > ul li:hover { background-color: rgb( 242,242,242 ) }
-details > ul li:first-child { margin: 0px -16px; padding: 14px 16px 16px 16px; }
+
+
+details {
+    position: relative;
+}
+
+details summary {
+    cursor: pointer;
+    padding: 16px;
+    position: relative;
+    z-index: 1
+}
+
+details>ul {
+    list-style: none;
+    position: absolute;
+    margin: auto;
+    padding: 0px 16px 16px 16px;
+    top: 0px;
+    right: 0px;
+    left: 0px;
+    z-index: 1000;
+    border: 1px solid rgb(204, 204, 204);
+    border-radius: 5px;
+    box-shadow: 3px 3px 6px rgb(172, 172, 172)
+}
+
+details>ul li {
+    cursor: pointer;
+    background-color: white;
+    padding: 16px;
+    margin: -8px -16px
+}
+
+details>ul li:hover {
+    background-color: rgb(242, 242, 242)
+}
+
+details>ul li:first-child {
+    margin: 0px -16px;
+    padding: 14px 16px 16px 16px;
+}
 
 button {
     height: 48px;
     border: 0 solid rgba(0, 0, 0, 0);
     background-color: rgb(242, 242, 242);
-    font: normal normal 500 normal 14px/normal Montserrat-Medium,Montserrat;
+    font: normal normal 500 normal 14px/normal Montserrat-Medium, Montserrat;
     color: rgb(202, 204, 204);
     border-radius: 4px;
     padding: 0 24px;
@@ -128,6 +185,10 @@ button.active {
     color: white;
 }
 
-button.active:hover { background-color: rgb(0, 174, 223); }
+button.active:hover {
+    background-color: rgb(0, 174, 223);
+}
 
-button.active:active { color: rgb(0, 108, 137); }
+button.active:active {
+    color: rgb(0, 108, 137);
+}
