@@ -99,13 +99,13 @@ main h2 + div {
     flex-grow: 1;
     background-color: white;
     border-radius: 5px;
-    padding: 40px;
+    padding: 16px 40px;
     display: flex; flex-direction: column; 
 }
 
-.CodeViewer > dl:not(.info) > *  { margin: 0px; padding: 0px }
-.CodeViewer > dl:not(.info) dt  { margin-bottom: 24px; font-size: 18px }
-.CodeViewer > dl:not(.info) dd { flex-grow: 1; position: relative; }
+.CodeViewer > dl:not(.info) > *  { margin: 0px; padding: 0px; }
+.CodeViewer > dl:not(.info) dt  { margin: 24px 0px; font-size: 18px }
+.CodeViewer > dl:not(.info) dd { flex-grow: 1; position: relative;  }
 .CodeViewer > dl:not(.info) dd .CodeMirrorViwer, .CodeViewer > dl dd .CodeMirror { height: 100% !important; }
 
 .Pagination {
