@@ -44,9 +44,10 @@ tag FormEditor < form
 			@cm.setOption "mode", @item:code:mode
 
 	def createSnipperHref
-		@href.dom:validity:valid && window.fetch( @href.value, { mode: 'no-cors' } ).then do |response|
-			changeSnipperName @filename.value = @filename.value || @href.value
-			response.text.then do|text| @cm.setValue @item:body = "{ @item:body || '' }\n{ text }"
+		@href.dom:validity:valid && window.fetch( @href.value ).then do |response|
+			changeSnipperName @filename.value = @filename.value || @href.value.split('/').reverse[0]
+			response.text.then do|text|
+				@cm.setValue @item:body = "{ @item:body || '' }\n{ text }"
 
 	def createSnipperFile e
 		let reader = FileReader.new
@@ -118,7 +119,12 @@ tag CodeMirrorViwer
 
 	def mount
 		dom:textContent = ''
-		@cm = CodeMirror dom, { readOnly: true, lineNumbers: true, value: @value, mode: @mode || 'text' }
+		@cm = CodeMirror dom, { readOnly: true, lineNumbers: true }
+		@cm.setOption "mode",  @mode ? @mode:mode : 'text'
+		if !@strings then @cm.setValue @value
+		else
+			@cm.setValue @value.split('\n').slice( 0, 10 ).join('\n')
+			@cm.setOption "scrollbarStyle", null
 
 	def render
 		<self>
@@ -142,8 +148,8 @@ tag CodeViewer < article
 				<dd> "Данных для просмотра пока еще нет."
 			else
 				<dl> for item, index in State.current:snippers
-				<dt> item:filename
-				<dd> <CodeMirrorViwer value=item:body mode=item:model >
+					<dt> item:filename
+					<dd> <CodeMirrorViwer value=item:body mode=item:code >
 
 tag Pagination < span
 

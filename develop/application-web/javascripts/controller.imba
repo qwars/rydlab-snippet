@@ -27,11 +27,12 @@ class Application
 		Promise.new do |resolve, reject|
 			@waiting = !!window.fetch( URI + '/insert', { method: 'post', body: JSON.stringify dataset } ).catch( do |error| reject error )
 				.then do |resource| resource.text.then do |iD|
+					if pages == page then page = pages
 					if @current = dataset then Imba.commit @waiting = resolve iD
 
 	def currentPage pID
 		!!pID && Promise.new do |resolve, reject|
-			@waiting = !!window.fetch( "{ URI }/list/{ @limit }/{ pID }", { method: 'get' } ).catch( do |error| reject error )
+			@waiting = !!window.fetch( "{ URI }/list/{ @limit }/{ pID isa Number ? pID : page }", { method: 'get' } ).catch( do |error| reject error )
 				.then do |resource| resource.json.then do |response|
 					if @pagelist = response then Imba.commit @waiting = resolve response
 					else
@@ -47,7 +48,6 @@ class Application
 
 	def initialize
 		@socket:onmessage = do|e|
-			currentSnipper 1
 			if !@counter = Number e:data then Imba.commit @waiting = undefined
 			else
 				currentPage pages == page, currentSnipper !@current && window:location:pathname.includes('view') && Number window:location:pathname.split('/').reverse[0]

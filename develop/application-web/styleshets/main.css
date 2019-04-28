@@ -93,7 +93,7 @@ main h2 + div {
 
 .ListCode > ul a { margin: 16px 0px; display: block; }
 .ListCode > ul li { border: 1px solid rgb(40, 49, 90); border-radius: 5px; padding: 0px 16px; box-sizing: border-box; margin: 16px 0px; }
-.ListCode > ul li .CodeMirrorViwer { margin: 16px 0px }
+.ListCode > ul li .CodeMirrorViwer { margin: 16px 0px; overflow: hidden; max-height: 180px; border-radius: 5px }
 
 .CodeViewer > dl:not(.info) {
     flex-grow: 1;
