@@ -10,7 +10,6 @@ use strict;
 use utf8;
 use Mojolicious::Lite;
 use Mojo::Pg;
-use Mojo::JSON qw(decode_json encode_json);
 use MIME::Types;
 
 # При первом запуске создаем таблицу 'snippers'
@@ -18,6 +17,8 @@ use MIME::Types;
 `sudo -u postgres psql -c 'CREATE TABLE IF NOT EXISTS snippers ( id serial primary key, created TIMESTAMP DEFAULT NOW(), body json );'`;
 
 my $pg = Mojo::Pg->new( 'postgresql://postgres@/postgres' );
+
+$pg->db->dbh->{pg_enable_utf8} = 1;
 
 my $db = $pg->db->listen( 'insert' );
 

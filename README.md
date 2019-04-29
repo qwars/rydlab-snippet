@@ -39,7 +39,6 @@ CPAN модули
 
     Mojolicious::Lite
     Mojo::Pg
-    Mojo::JSON
     MIME::Types
 
 
