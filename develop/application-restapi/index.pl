@@ -11,6 +11,7 @@ use utf8;
 use Mojolicious::Lite;
 use Mojo::Pg;
 use MIME::Types;
+use Data::Dumper;
 
 # При первом запуске создаем таблицу 'snippers'
 
@@ -23,6 +24,15 @@ $pg->db->dbh->{pg_enable_utf8} = 1;
 my $db = $pg->db->listen( 'insert' );
 
 my $mt = MIME::Types->new;
+
+sub headerOrigin {
+    my $c = shift;
+    $c->res->headers->header( 'Access-Control-Allow-Origin' => '*' );
+    $c->res->headers->header( 'Pragma'                      => 'no-cache' );
+    $c->res->headers->header( 'Cache-Control'               => 'no-cache' );
+    $c
+}
+
 
 =head1 NAME
 
@@ -43,10 +53,7 @@ morbo -m production -w ./index.pl ./index.pl
 # Получение данных snipper по id. Пример:  http://example.com/view/34
 
 get '/view/:id' => sub {
-    my $c = shift;
-    $c->res->headers->header( 'Access-Control-Allow-Origin' => '*' );
-    $c->res->headers->header( 'Pragma'                      => 'no-cache' );
-    $c->res->headers->header( 'Cache-Control'               => 'no-cache' );
+    my $c = headerOrigin( shift );
     my $response = $db->select( 'snippers', ['body'], { id => $c->param( 'id' ) } )->hash;
     $c->render( text => $response ? $response->{body} : 'null' );
 };
@@ -58,10 +65,7 @@ get '/view/:id' => sub {
 # Получение данных списка snipper. Пример:  http://example.com//list/24/4
 
 get '/list/:count/:page' => sub {
-    my $c = shift;
-    $c->res->headers->header( 'Access-Control-Allow-Origin' => '*' );
-    $c->res->headers->header( 'Pragma'                      => 'no-cache' );
-    $c->res->headers->header( 'Cache-Control'               => 'no-cache' );
+    my $c = headerOrigin( shift );
     my $count  = $c->param( 'count' );
     my $offset = ( $c->param( 'page' ) - 1 ) * $count;
     $c->render( json => $db->select( 'snippers', '*', undef, \"id DESC LIMIT $count OFFSET $offset" )->expand->hashes );
@@ -76,10 +80,7 @@ get '/list/:count/:page' => sub {
 # Добавление нового snipper. Пример: C<POST>   http://example.com/insert
 
 post '/insert' => sub {
-    my $c = shift;
-    $c->res->headers->header( 'Access-Control-Allow-Origin' => '*' );
-    $c->res->headers->header( 'Pragma'                      => 'no-cache' );
-    $c->res->headers->header( 'Cache-Control'               => 'no-cache' );
+    my $c = headerOrigin( shift );    
     my $response = $db->insert( 'snippers', { body => $c->req->text }, { returning => 'id' } )->hash;
     $c->render( text => $response ? $response->{id} : 'null' );
 };
@@ -93,10 +94,7 @@ post '/insert' => sub {
 # Получение MIME данных. Пример: C<POST>   http://example.com/
 
 post '/' => sub {
-    my $c = shift;
-    $c->res->headers->header( 'Access-Control-Allow-Origin' => '*' );
-    $c->res->headers->header( 'Pragma'                      => 'no-cache' );
-    $c->res->headers->header( 'Cache-Control'               => 'no-cache' );
+    my $c = headerOrigin( shift );
     my $filename = $c->req->text =~ /ext\.(\w+?)*$/ ? $c->req->text : 'ext.txt';
     my $mm       = $mt->mimeTypeOf( $filename );
     my $mime     = { %{ $mm || {} }, ( filename => $filename, mode => ( $mm ? $mm->subType() : 'text' ) ) };
