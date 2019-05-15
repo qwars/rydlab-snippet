@@ -10,14 +10,15 @@ use strict;
 use utf8;
 use Mojolicious::Lite;
 use Mojo::Pg;
+use Mojo::Pg::Migrations;
 use MIME::Types;
 use Data::Dumper;
 
 # При первом запуске создаем таблицу 'snippers'
 
-`sudo -u postgres psql -c 'CREATE TABLE IF NOT EXISTS snippers ( id serial primary key, created TIMESTAMP DEFAULT NOW(), body json );'`;
-
 my $pg = Mojo::Pg->new( 'postgresql://postgres@/postgres' );
+
+Mojo::Pg::Migrations->new( pg => $pg )->from_string('CREATE TABLE IF NOT EXISTS snippers ( id serial primary key, created TIMESTAMP DEFAULT NOW(), body json );');
 
 $pg->db->dbh->{pg_enable_utf8} = 1;
 
@@ -66,6 +67,7 @@ get '/view/:id' => sub {
 
 get '/list/:count/:page' => sub {
     my $c = headerOrigin( shift );
+    return $c->render( json => [] ) if $c->param( 'count' ) =~ /\D/ || $c->param( 'page' )  =~ /\D/;
     my $count  = $c->param( 'count' );
     my $offset = ( $c->param( 'page' ) - 1 ) * $count;
     $c->render( json => $db->select( 'snippers', '*', undef, \"id DESC LIMIT $count OFFSET $offset" )->expand->hashes );
