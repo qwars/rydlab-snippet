@@ -234,6 +234,16 @@ main h2+div {
     padding-bottom: 28px;
 }
 
+.ListCode > h2 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+}
+.ListCode > h2  I + span { flex-grow: 1; }
+.ListCode > h2 aside var { margin: 0px 6px; display: inline-block; }
+.ListCode > h2 aside var:not(:last-child):after { content: ", " }
+
 .ListCode>ul {
     list-style: none;
     margin: -16px 0px 0px 0px;

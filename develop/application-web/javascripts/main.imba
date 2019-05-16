@@ -179,6 +179,16 @@ tag Pagination < span
 
 tag ListCode < section
 
+	prop modes default: [
+		{ name: "Auto", mode: '' },
+		CodeMirror.findModeByExtension 'pl'
+		CodeMirror.findModeByExtension 'js'
+		CodeMirror.findModeByExtension 'java'
+		CodeMirror.findModeByExtension 'css'
+		CodeMirror.findModeByExtension 'html'
+	]
+
+
 	def selectCurrent item
 		if State.current = item:body then router.go "/view/{ item:id }"
 
@@ -187,12 +197,15 @@ tag ListCode < section
 
 	def render
 		<self>
-			if State.counter > State.limit then <Pagination>
+			if Number( !State.counter || State.counter:count ) > State.limit then <Pagination>
 
 			<h2>
 				<i.fas.fa-code>
 				<span> "Все фрагменты"
-			if State.counter isa Number && !State.counter then <dl.info>
+				<aside>
+					if State.counter && State.counter:count then for item in @modes when !!State.counter:mode[ item:mode ]
+						<var> "{ item:name }: { State.counter:mode[ item:mode ] } "
+			if Number( !State.counter || State.counter:count ) === 0 then <dl.info>
 				<dt> <i.fas.fa-info-circle>
 				<dd> "Данных для просмотра пока еще нет."
 			else if State.waiting then <div>
