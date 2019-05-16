@@ -54,7 +54,8 @@ class Application
 		# Открываем сокет, если в базе произошли изменения обновляем текущие данные состояния
 		# При старте получаем данные для наполнения страницы
 		@socket:onmessage = do|e|
-			if !@counter = Number e:data then Imba.commit @waiting = undefined
+			console.log @counter = JSON:parse e:data
+			if !@counter:count then Imba.commit @waiting = undefined
 			else
 				currentPage !@page || pages == page
 				!@current && currentSnipper window:location:pathname.includes('view') && Number window:location:pathname.split('/').reverse[0]

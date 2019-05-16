@@ -63,7 +63,7 @@ get '/view/:id' => sub {
 
 =cut
 
-# Получение данных списка snipper. Пример:  http://example.com//list/24/4
+# Получение данных списка snipper. Пример:  http://example.com/list/24/4
 
 get '/list/:count/:page' => sub {
     my $c = headerOrigin( shift );
@@ -111,19 +111,38 @@ post '/' => sub {
 
 =cut
 
+sub currentStats {
+    my $mode = {};
+    $db->query( "select * from snippers" )->expand->hashes->map(
+        sub {
+            foreach ( @{ $_->{body}->{snippers} } ) {
+                $mode->{ $_->{code}->{mode} } += 1 
+            }
+        }
+    );
+    
+    {
+        json => {
+            count => $db->query( 'select count(id) from snippers' )->hash->{count},
+            mode => $mode
+        } 
+    }
+}
+
+
 # Демон ws для слежение за состоянием таблицы Pg 'snipper'. Пример:  ws://example.com/
 
 websocket '/' => sub {
     my $self = shift;
     $self->on(
         message => sub {
-            my ( $self, $message ) = @_;
-            $self->send( $db->query( 'select count(id) from snippers' )->hash->{count} );
+            my ( $self, $message ) = @_;            
+            $self->send( currentStats() );
 
             # Вешаем слушателя, возвращаем количество данных в таблице
             $db->on(
                 notification => sub {
-                    $self->send( text => $db->query( 'select count(id) from snippers' )->hash->{count} );
+                    $self->send( currentStats() );
                 } );
         } );
 };
